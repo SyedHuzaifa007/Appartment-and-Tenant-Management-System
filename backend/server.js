@@ -18,7 +18,7 @@ const db = mongoose.connection;
 db.once("open", () => console.log("Connected to MongoDB"));
 
 app.get("/", (req, res) => {
-  res.send("MERN backend running!");
+  res.send("Backend running!");
 });
 
 app.use(cors({

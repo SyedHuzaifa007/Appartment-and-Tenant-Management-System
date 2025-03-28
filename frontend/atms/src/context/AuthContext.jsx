@@ -10,28 +10,70 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       axios.get("http://localhost:5000/api/auth/profile", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then(res => setUser(res.data))
       .catch(() => setUser(null));
     }
   }, [token]);
 
-  const login = async (email, password) => {
-    const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
-    setToken(res.data.token);
-    localStorage.setItem("token", res.data.token);
-    setUser(res.data.user);
+  const register = async (name, email, password, role, navigate) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role }),
+      });
+
+      const text = await response.text(); 
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (jsonError) {
+        console.error("Error parsing JSON:", jsonError);
+        throw new Error("Invalid response from server");
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || "Signup failed!");
+      }
+
+      setUser(data.user);
+      alert("Signup successful!");
+      navigate("/login"); 
+    } catch (error) {
+      console.error("Signup error:", error.message);
+      alert(error.message);
+    }
   };
 
-  const register = async (name, email, password, role) => {
-    await axios.post("http://localhost:5000/api/auth/register", { name, email, password, role });
+  const login = async (name, password, navigate) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", { name, password });
+
+      setToken(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      setUser(res.data.user);
+      if (res.data.user.role === "landlord") {
+        navigate("/landlord-dashboard");
+      } else if (res.data.user.role === "tenant") {
+        navigate("/tenant-dashboard");
+      } else if (res.data.user.role === "maintenance") {
+        navigate("/maintenance-dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login error:", error.response?.data?.message || error.message);
+      alert(error.response?.data?.message || "Login failed. Please try again.");
+    }
   };
 
-  const logout = () => {
+  const logout = (navigate) => {
     setToken(null);
     localStorage.removeItem("token");
     setUser(null);
+    navigate("/login"); 
   };
 
   return (
