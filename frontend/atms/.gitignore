@@ -1,4 +1,5 @@
 *.env
+*.pdf
 # Logs
 logs
 *.log

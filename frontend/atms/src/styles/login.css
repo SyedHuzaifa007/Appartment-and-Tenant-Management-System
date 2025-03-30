@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+.login-container {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6; 
+  }
+  
+  .login-box {
+    width: 100%;
+    max-width: 400px;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #1f2937; /* Tailwind's text-gray-800 */
+    margin-bottom: 1rem;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .input-field:focus {
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); /* Tailwind's focus:ring-blue-300 */
+  }
+  
+  .login-button {
+    width: 100%;
+    background-color: #3b82f6; /* Tailwind's bg-blue-500 */
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #2563eb; /* Tailwind's hover:bg-blue-600 */
+  }
+  
