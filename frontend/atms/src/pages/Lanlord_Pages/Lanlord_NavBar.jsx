@@ -3,14 +3,12 @@ import { NavLink } from 'react-router-dom';
 const NavLandlord = () => {
   return (
     <nav>
-      <ul>
-        <li><NavLink to="/home">Home</NavLink></li>
-        <li><NavLink to="/properties">Properties</NavLink></li>
-        <li><NavLink to="/staff">Staff</NavLink></li>
-        <li><NavLink to="/finances">Finances</NavLink></li>
-        <li><NavLink to="/profile">Profile</NavLink></li>
-        <li><NavLink to="/settings">Settings</NavLink></li>
-      </ul>
+      <NavLink to="/landlord/home">Home</NavLink>
+      <NavLink to="/landlord/properties">Properties</NavLink>
+      <NavLink to="/landlord/staff">Staff</NavLink>
+      <NavLink to="/landlord/finances">Finances</NavLink>
+      <NavLink to="/landlord/profile">Profile</NavLink>
+      <NavLink to="/landlord/settings">Settings</NavLink>
     </nav>
   );
 };

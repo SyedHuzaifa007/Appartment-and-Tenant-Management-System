@@ -30,17 +30,17 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          
+
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/landlord" element={<LandlordLayout />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/properties" element={<PropertiesPage />} />
-            <Route path="/staff" element={<StaffPage />} />
-            <Route path="/finances" element={<FinancesPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="home" element={<HomePage />} />
+            <Route path="properties" element={<PropertiesPage />} />
+            <Route path="staff" element={<StaffPage />} />
+            <Route path="finances" element={<FinancesPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
 
           <Route path="/tenant-dashboard" element={<TenantDashboard />}></Route>
