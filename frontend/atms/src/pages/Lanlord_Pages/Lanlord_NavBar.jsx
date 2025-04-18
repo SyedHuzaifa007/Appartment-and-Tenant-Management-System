@@ -1,14 +1,45 @@
 import { NavLink } from 'react-router-dom';
+import '../../styling/LandlordStyling/Landlord_Navbar.css';
 
-const NavLandlord = () => {
+import homeIcon from '../../assets/HomeIcon_Grey.png';
+import propertyIcon from '../../assets/PropertyIcon_Grey.png';
+import staffIcon from '../../assets/StaffIcon_Grey.png';
+import financesIcon from '../../assets/FinancesIcon_Grey.png';
+import profileIcon from '../../assets/ProfileIcon_Grey.png';
+import settingsIcon from '../../assets/SettingsIcon_Grey.png';
+
+const NavLandlord = ({ collapsed }) => {
   return (
-    <nav>
-      <NavLink to="/landlord/home">Home</NavLink>
-      <NavLink to="/landlord/properties">Properties</NavLink>
-      <NavLink to="/landlord/staff">Staff</NavLink>
-      <NavLink to="/landlord/finances">Finances</NavLink>
-      <NavLink to="/landlord/profile">Profile</NavLink>
-      <NavLink to="/landlord/settings">Settings</NavLink>
+    <nav className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+      <NavLink to="/landlord/home">
+        <img src={homeIcon} className="icon" />
+        {!collapsed && <span>Home</span>}
+      </NavLink>
+
+      <NavLink to="/landlord/properties">
+        <img src={propertyIcon} className="icon" />
+        {!collapsed && <span>Properties</span>}
+      </NavLink>
+
+      <NavLink to="/landlord/staff">
+        <img src={staffIcon} className="icon" />
+        {!collapsed && <span>Staff</span>}
+      </NavLink>
+
+      <NavLink to="/landlord/finances">
+        <img src={financesIcon} className="icon" />
+        {!collapsed && <span>Finances</span>}
+      </NavLink>
+
+      <NavLink to="/landlord/profile">
+        <img src={profileIcon} className="icon" />
+        {!collapsed && <span>Profile</span>}
+      </NavLink>
+
+      <NavLink to="/landlord/settings">
+        <img src={settingsIcon} className="icon" />
+        {!collapsed && <span>Settings</span>}
+      </NavLink>
     </nav>
   );
 };
