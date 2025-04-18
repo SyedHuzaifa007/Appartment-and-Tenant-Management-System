@@ -8,9 +8,16 @@ import axios from "axios";
 
 import LandlordLayout from "./pages/Lanlord_Pages/LanlordLayout";
 import HomePage from "./pages/Lanlord_Pages/HomePage";
+import PropertiesPage from "./pages/Lanlord_Pages/PropertiesPage";
+import StaffPage from "./pages/Lanlord_Pages/StaffPage";
+import FinancesPage from './pages/Lanlord_Pages/FinancesPage';
+import ProfilePage from "./pages/Lanlord_Pages/ProfilePage";
+import SettingsPage from "./pages/Lanlord_Pages/SettingsPage";
+
 
 import TenantDashboard from "./pages/TenantDashboard";
 import MaintenanceDashboard from "./pages/MaintenanceDashboard";
+
 
 function App() {
 
@@ -23,16 +30,17 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/landlord" element={<LandlordLayout />}>
             <Route path="/home" element={<HomePage />} />
-            <Route path="/properties" element={<HomePage />} />
-            <Route path="/staff" element={<HomePage />} />
-            <Route path="/finances" element={<HomePage />} />
-            <Route path="/profile" element={<HomePage />} />
-            <Route path="/settings" element={<HomePage />} />
+            <Route path="/properties" element={<PropertiesPage />} />
+            <Route path="/staff" element={<StaffPage />} />
+            <Route path="/finances" element={<FinancesPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
           <Route path="/tenant-dashboard" element={<TenantDashboard />}></Route>

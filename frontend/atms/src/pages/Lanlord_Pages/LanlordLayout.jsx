@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import NavLandlord from '../components/NavLandlord';
+import NavLandlord from '../Lanlord_Pages/Lanlord_NavBar';
 
 const LandlordLayout = () => {
   return (
