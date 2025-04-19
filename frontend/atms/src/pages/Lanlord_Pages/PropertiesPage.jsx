@@ -4,6 +4,7 @@ import tenantsIcon from '../../assets/Tenants_Blue.png'
 import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
+import { useNavigate } from 'react-router-dom';
 
 function PropertiesPage() {
     const propertiesdata = [{
@@ -15,28 +16,34 @@ function PropertiesPage() {
         tenants: '10'
     },
     {
-        id: '123',
+        id: '456',
         image: "helle",
-        title: 'Sunset Apartment',
+        title: 'Silicon Apartment',
         address: '123, Sunset Blvs, Los Angeles, CA 90210',
         units: '12',
         tenants: '10'
     },
     {
-        id: '123',
+        id: '789',
         image: "helle",
-        title: 'Sunset Apartment',
+        title: 'Villa',
         address: '123, Sunset Blvs, Los Angeles, CA 90210',
         units: '12',
         tenants: '10'
     }, {
-        id: '123',
+        id: '109',
         image: "helle",
-        title: 'Sunset Apartment',
+        title: 'Valencia Apartment',
         address: '123, Sunset Blvs, Los Angeles, CA 90210',
         units: '12',
         tenants: '10'
     }];
+
+    const navigate = useNavigate();
+
+    const handleNavigation=(id,tit,addr,u,t)=>{
+        navigate(`/landlord/properties/${id}`,{state: { title: tit, address: addr, units:u,tenants:t }})
+    }
 
     return (
         <>
@@ -67,7 +74,7 @@ function PropertiesPage() {
                                     <p>{obj.tenants} Tenants</p>
                                 </div>
                             </div>
-                            <button className="viewBtn">View Property</button>
+                            <button className="viewBtn" onClick={() => handleNavigation(obj.id,obj.title,obj.address,obj.units,obj.tenants)}>View Property</button>
                             <div className="delete_edit">
                                 <button className="editBtn"><img src={editIcon} className="editIcon" /><p className="editText">Edit</p></button>
                                 <button className="deleteBtn"><img src={deleteIcon} className="deleteIcon"/><p className="deleteText">Delete</p></button>
