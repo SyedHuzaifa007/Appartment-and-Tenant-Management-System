@@ -1,0 +1,35 @@
+.sidebar a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  text-decoration: none;
+  font-size: medium;
+  padding: 13px 7%;
+  color: rgb(202, 202, 202);
+  white-space: nowrap;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed a {
+  justify-content: center;
+  gap: 0px;
+}
+
+.sidebar.collapsed a span {
+  display: none;
+}
+
+.icon {
+  width: 17px;
+  margin-bottom: 2px;
+}
+
+.sidebar a:hover {
+  background-color: rgb(40, 83, 227);
+}
+
+.sidebar a.active {
+  background-color: rgb(59, 130, 246);
+}
