@@ -1,0 +1,216 @@
+.Main {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    margin-bottom: 0px;
+}
+
+.smallText {
+    color: #64748B;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 1px;
+}
+
+.singleCard {
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1 1 calc(33.333% - 20px);
+    max-width: calc(33.333% - 20px);
+    box-sizing: border-box;
+    width: 32%;
+    border-radius: 10px;
+    box-shadow: .5px .5px 4px 0px rgba(0, 0, 0, 0.1);
+    padding-bottom: 30px;
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.cardMainText {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.addr {
+    color: #64748B;
+}
+
+.details {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.unitsBox,
+.tenantsBox {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+h2,
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+.propertyImg {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    width: 100%;
+}
+
+.iconBuilding {
+    width: 20px;
+}
+
+.iconTenants {
+    width: 30px;
+}
+
+.editIcon {
+    width: 16px;
+}
+.deleteIcon{
+    width: 15px;
+}
+
+.AddPropertyBtn {
+    font-weight: 550;
+    background-color: #3B82F6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 110px;
+    height: 43px;
+}
+
+.AddPropertyBtn:hover {
+    background-color: #244ac9;
+}
+
+.viewBtn {
+    font-weight: 550;
+    background-color: #3B82F6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width:100%;
+    height: 40px;
+}
+
+.delete_edit{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+.editBtn,.deleteBtn{
+    padding-left: 20px;
+    padding-right: 20px;
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 130px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgb(191, 197, 216);
+    background-color: white;
+}
+.deleteText{
+    font-size: small;
+    color: red;
+}
+.editText{
+    font-size: small;
+}
+
+.viewBtn:hover {
+    background-color: #244ac9;
+}
+.deleteBtn:hover{
+    background-color: rgb(239, 201, 201);
+    border: none;
+}
+.editBtn:hover{
+    background-color: rgb(220, 225, 241);
+}
+
+@media (max-width: 1144px) {
+    .singleCard {
+        flex: 1 1 calc(48% - 20px);
+        max-width: calc(48% - 20px);
+    }
+}
+
+@media (max-width: 815px) {
+    .singleCard {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .viewBtn {
+        width: 90%;
+    }
+
+    .AddPropertyBtn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .Main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .cards {
+        justify-content: center;
+    }
+}

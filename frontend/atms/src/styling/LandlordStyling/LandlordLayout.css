@@ -1,7 +1,8 @@
-body{
+body {
   padding: 0px;
   margin: 0px;
   font-family: sans-serif;
+  background-color: #F9FAFB;
 }
 
 .layout-container {
@@ -10,8 +11,11 @@ body{
 }
 
 .sidebar {
+  position: sticky;
+  top: 0;
   padding-top: 100px;
   width: 15%;
+  height: 100vh;
   background-color: rgb(30, 64, 175);
   display: flex;
   flex-direction: column;
@@ -34,6 +38,9 @@ body{
 }
 
 .topbar {
+  position: sticky;
+  top: 0;
+
   height: 70px;
   background-color: rgb(255, 255, 255);
   display: flex;
@@ -58,7 +65,7 @@ body{
   background-color: rgb(220, 225, 241);
 }
 
-.menuIcon{
+.menuIcon {
   margin-left: 20px;
   width: 25px;
   cursor: pointer;
