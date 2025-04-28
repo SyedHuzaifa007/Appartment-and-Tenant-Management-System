@@ -6,20 +6,31 @@ import { useState } from 'react'
 function SettingsPage({ theme, handleThemeToggle }) {
     const [securityMenu, changeSecurityMenu] = useState(false)
     const [generalMenu, changeGeneralMenu] = useState(true)
+    const [paymentMenu, changePaymentMenu] = useState(false)
 
     function changeToSecurity() {
         changeSecurityMenu(true)
         changeGeneralMenu(false)
+        changePaymentMenu(false)
     }
     function changeToGeneral() {
         changeSecurityMenu(false)
         changeGeneralMenu(true)
+        changePaymentMenu(false)
+    }
+    function changeToPayment() {
+        changeSecurityMenu(false)
+        changeGeneralMenu(false)
+        changePaymentMenu(true)
     }
     function handleDeletion() {
         const confirmDelete = window.confirm(`Do you wish to delete Account?`);
         if (confirmDelete) {
             alert("Account Deleted Successfully!!")
         }
+    }
+    function handleSaveBtn(){
+        alert("Settings Saved!")
     }
 
     return (
@@ -29,6 +40,7 @@ function SettingsPage({ theme, handleThemeToggle }) {
             <div className='menuBar'>
                 <label onClick={changeToGeneral} className={generalMenu ? 'selected' : ''}>General</label>
                 <label onClick={changeToSecurity} className={securityMenu ? 'selected' : ''}> Privacy & Security</label>
+                <label onClick={changeToPayment} className={paymentMenu ? 'selected' : ''}> Payments</label>
             </div>
 
 
@@ -64,6 +76,21 @@ function SettingsPage({ theme, handleThemeToggle }) {
                     <button className='changeBtn'>Change Password</button>
                 </div>
                 <button onClick={handleDeletion} className='delBtn'>Delete Account</button>
+            </div>}
+
+            {paymentMenu && <div className='payment'>
+                <div className='mainText'>
+                    <h2>Payment Settings</h2>
+                    <p className='smallText'>Manage your Banking details</p>
+                </div>
+                <div className='fields'>
+                    <select className='options'>
+                        <option>JazzCash</option>
+                    </select>
+                    <p className='smallText'>IBAN:</p>
+                    <input className='inputField' type="text" placeholder='Enter IBAN' />
+                </div>
+                <button className='saveBtn' onClick={handleSaveBtn}>Save Settings</button>
             </div>}
 
         </div>

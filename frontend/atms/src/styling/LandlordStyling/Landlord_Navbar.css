@@ -31,7 +31,7 @@
 }
 
 .sidebar a.active {
-  background-color: var(--sidebar-selected);
+  background-color: var(--siderbar-selected);
 }
 
 @media (max-width: 842px) {
