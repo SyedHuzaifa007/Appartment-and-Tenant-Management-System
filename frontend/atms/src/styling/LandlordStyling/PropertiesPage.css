@@ -12,7 +12,7 @@ h1 {
 }
 
 .smallText {
-    color: #64748B;
+    color: var(--smalltext-color);
 }
 
 .cards {
@@ -25,7 +25,7 @@ h1 {
 }
 
 .singleCard {
-    background-color: white;
+    background-color: var(--card-color);
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -64,7 +64,7 @@ h1 {
 }
 
 .addr {
-    color: #64748B;
+    color: var(--smalltext-color);
 }
 
 .details {
@@ -118,7 +118,7 @@ p {
 
 .AddPropertyBtn {
     font-weight: 550;
-    background-color: #3B82F6;
+    background-color: var(--blue-button);
     color: white;
     border: none;
     border-radius: 5px;
@@ -127,12 +127,12 @@ p {
 }
 
 .AddPropertyBtn:hover {
-    background-color: #244ac9;
+    background-color: var(--hoverBlue-color);
 }
 
 .viewBtn {
     font-weight: 550;
-    background-color: #3B82F6;
+    background-color: var(--blue-button);
     color: white;
     border: none;
     border-radius: 5px;
@@ -163,7 +163,7 @@ p {
     height: 40px;
     border-radius: 10px;
     border: 1px solid rgb(191, 197, 216);
-    background-color: white;
+    background-color: var(--white-button);
 }
 .deleteText{
     font-size: small;
@@ -174,14 +174,14 @@ p {
 }
 
 .viewBtn:hover {
-    background-color: #244ac9;
+    background-color: var(--hoverBlue-color);
 }
 .deleteBtn:hover{
     background-color: rgb(239, 201, 201);
     border: none;
 }
 .editBtn:hover{
-    background-color: rgb(220, 225, 241);
+    background-color: var(--white-button-hover);
 }
 
 @media (max-width: 1144px) {

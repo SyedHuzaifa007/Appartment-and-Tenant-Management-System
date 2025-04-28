@@ -1,0 +1,45 @@
+body.light {
+    --background-color: #F9FAFB;
+
+    --maintext-color: #000000;
+    --smalltext-color: #64748B;
+
+    --card-color: white;
+
+    --white-button: white;
+    --white-button-hover: rgb(220, 225, 241);
+
+    --top-bar: white;
+
+    --primary-color: rgb(30, 64, 175);
+    --blue-button: #3B82F6;
+    --hoverBlue-color: #244ac9;
+
+    --sidebar-hover: rgb(40, 83, 227);
+    --siderbar-selected: rgb(59, 130, 246);
+
+    --input-color: #ccc;
+}
+
+body.dark {
+    --background-color: #1f2937;
+
+    --maintext-color: #ffffff;
+    --smalltext-color: #9ca3af;
+
+    --card-color: #374151;
+
+    --white-button: #4b5563;
+    --white-button-hover: #6b7280;
+
+    --top-bar: #111827;
+
+    --primary-color: rgb(30, 64, 175);
+    --blue-button: #3B82F6;
+    --hoverBlue-color: #244ac9;
+
+    --sidebar-hover: rgb(40, 83, 227);
+    --sidebar-selected: rgb(59, 130, 246);
+
+    --input-color: #6b7280;
+}

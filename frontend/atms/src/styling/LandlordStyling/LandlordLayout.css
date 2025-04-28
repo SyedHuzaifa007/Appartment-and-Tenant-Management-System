@@ -2,7 +2,7 @@ body {
   padding: 0px;
   margin: 0px;
   font-family: sans-serif;
-  background-color: #F9FAFB;
+  background-color: var(--background-color)
 }
 
 .layout-container {
@@ -16,7 +16,7 @@ body {
   padding-top: 100px;
   width: 15%;
   height: 100vh;
-  background-color: rgb(30, 64, 175);
+  background-color: var(--primary-color);
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
@@ -42,7 +42,7 @@ body {
   top: 0;
 
   height: 70px;
-  background-color: rgb(255, 255, 255);
+  background-color: var(--top-bar);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,7 +52,7 @@ body {
 .logout-btn {
   margin-right: 30px;
   padding: 12px;
-  background-color: white;
+  background-color: var(--white-button);
   color: black;
   border: 1px solid rgb(191, 197, 216);
   border-radius: 4px;
@@ -62,7 +62,7 @@ body {
 }
 
 .logout-btn:hover {
-  background-color: rgb(220, 225, 241);
+  background-color: var(--white-button-hover);
 }
 
 .menuIcon {
@@ -73,4 +73,10 @@ body {
 
 .main-content {
   padding: 20px;
+}
+
+@media (max-width: 842px) {
+  .menuIcon{
+    visibility: hidden;
+  }
 }

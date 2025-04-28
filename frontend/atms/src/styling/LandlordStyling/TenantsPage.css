@@ -22,7 +22,7 @@
     border-collapse: collapse;
     text-align: center;
     box-shadow: 0px .5px 4px 0px rgba(0, 0, 0, 0.1);
-    background-color: white;
+    background-color: var(--card-color);
     border-radius: 10px;
     border: none;
 }
@@ -37,7 +37,7 @@
 }
 
 .tenants-table th {
-    color: #7d91ac;
+    color: var(--smalltext-color);
 }
 
 .tenants-table tr {
@@ -52,14 +52,14 @@
 .delete-btn,
 .edit-btn {
     border: none;
-    background-color: white;
+    background-color: var(--card-color);
     cursor: pointer;
 }
 
 .back-btn,.cancel-btn {
     margin-right: 30px;
     padding: 12px;
-    background-color: white;
+    background-color: var(--white-button);
     color: black;
     border: 1px solid rgb(191, 197, 216);
     border-radius: 4px;
@@ -69,15 +69,15 @@
 }
 
 .back-btn:hover {
-    background-color: rgb(220, 225, 241);
+    background-color: var(--white-button-hover);
 }
 .cancel-btn:hover {
-    background-color: rgb(220, 225, 241);
+    background-color: var(--white-button-hover);
 }
 
 .addTenant-btn,.save-btn {
     font-weight: 550;
-    background-color: #3B82F6;
+    background-color: var(--blue-button);
     color: white;
     border: none;
     border-radius: 5px;
@@ -86,10 +86,10 @@
 }
 
 .addTenant-btn:hover {
-    background-color: #244ac9;
+    background-color: var(--hoverBlue-color);
 }
 .save-btn:hover {
-    background-color: #244ac9;
+    background-color: var(--hoverBlue-color);
 }
 
 .modal {
@@ -101,7 +101,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background: var(--card-color);
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
@@ -142,7 +142,7 @@
 .modal input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input-color);
     border-radius: 5px;
     box-sizing: border-box;
     margin-bottom: 10px;
