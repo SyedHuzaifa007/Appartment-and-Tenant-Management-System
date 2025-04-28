@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import "./styling/global-style.css"
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -23,6 +24,21 @@ import MaintenanceDashboard from "./pages/MaintenanceDashboard";
 
 function App() {
 
+  const [theme, setTheme] = useState('light');
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('app-theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+    }, []);
+    useEffect(() => {
+        document.body.className = theme;
+        localStorage.setItem('app-theme', theme);
+    }, [theme]);
+    const handleThemeToggle = () => {
+        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    };
+
   useEffect(() => {
     axios.get("http://localhost:5000/")
       .catch((err) => console.error(err));
@@ -43,7 +59,7 @@ function App() {
             <Route path="staff" element={<StaffPage />} />
             <Route path="finances" element={<FinancesPage />} />
             <Route path="profile" element={<ProfilePage />} />
-            <Route path="settings" element={<SettingsPage />} />
+            <Route path="settings" element={<SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
           </Route>
 
           <Route path="/tenant-dashboard" element={<TenantDashboard />}></Route>

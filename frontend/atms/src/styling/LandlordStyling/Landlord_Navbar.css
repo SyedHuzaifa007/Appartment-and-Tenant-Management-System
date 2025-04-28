@@ -27,9 +27,24 @@
 }
 
 .sidebar a:hover {
-  background-color: rgb(40, 83, 227);
+  background-color: var(--sidebar-hover);
 }
 
 .sidebar a.active {
-  background-color: rgb(59, 130, 246);
+  background-color: var(--sidebar-selected);
+}
+
+@media (max-width: 842px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  .sidebar a {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .sidebar a span {
+    display: none;
+  }
 }
