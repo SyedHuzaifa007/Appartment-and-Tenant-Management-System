@@ -58,7 +58,7 @@ input:checked+.slider:before {
 }
 
 .appearance,
-.security {
+.security,.payment {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -153,4 +153,37 @@ label {
 
 .delBtn:hover{
     background-color: rgb(214, 3, 3);
+}
+
+.saveBtn{
+    background-color: var(--blue-button);
+    color: white;
+    width:fit-content;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-weight: 600;
+}
+.saveBtn:hover{
+    background-color: var(--hoverBlue-color);
+}
+
+.fields{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.inputField{
+    padding: 10px;
+    border-radius: 5px;
+    border:1px solid rgb(191, 197, 216);
+}
+
+.options{
+    padding: 5px;
+    width: fit-content;
+    color: var(--smalltext-color);
+    border: 1px solid rgb(191, 197, 216);
+    border-radius: 5px;
 }
