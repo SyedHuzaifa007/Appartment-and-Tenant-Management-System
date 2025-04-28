@@ -14,11 +14,16 @@ import StaffPage from "./pages/Lanlord_Pages/StaffPage";
 import FinancesPage from './pages/Lanlord_Pages/FinancesPage';
 import ProfilePage from "./pages/Lanlord_Pages/ProfilePage";
 import SettingsPage from "./pages/Lanlord_Pages/SettingsPage";
-
 import TenantsPage from "./pages/Lanlord_Pages/TenantsPage";
 
 
-import TenantDashboard from "./pages/TenantDashboard";
+import TenantLayout from "./pages/Tenant_Pages/TenantLayout";
+import THomePage from './pages/Tenant_Pages/HomePage'
+import TPayments from './pages/Tenant_Pages/TenantPaymentsPage'
+import TMaintainance from './pages/Tenant_Pages/TenantsMaintainancePage'
+import TProfile from './pages/Tenant_Pages/TenantsProfilePage'
+import TSettings from './pages/Tenant_Pages/TenantsSettings'
+
 import MaintenanceDashboard from "./pages/MaintenanceDashboard";
 
 
@@ -62,7 +67,14 @@ function App() {
             <Route path="settings" element={<SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
           </Route>
 
-          <Route path="/tenant-dashboard" element={<TenantDashboard />}></Route>
+          <Route path="/tenant" element={<TenantLayout />}>
+            <Route path="home" element={<THomePage />} />
+            <Route path="payments" element={<TPayments />} />
+            <Route path="maintainance" element={<TMaintainance />} />
+            <Route path="profile" element={<TProfile />} />
+            <Route path="settings" element={<TSettings theme={theme} handleThemeToggle={handleThemeToggle} />} />
+          </Route>
+
           <Route path="/maintenance-dashboard" element={<MaintenanceDashboard />}></Route>
         </Routes>
       </Router>
