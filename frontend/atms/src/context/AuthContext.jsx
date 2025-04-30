@@ -54,11 +54,11 @@ export const AuthProvider = ({ children }) => {
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
       setUser(res.data.user);
-      if (res.data.user.role === "landlord") {
+      if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {
         navigate("/landlord");
-      } else if (res.data.user.role === "tenant") {
+      } else if (res.data.user.role === "tenant" || res.data.user.role === "Tenant") {
         navigate("/tenant-dashboard");
-      } else if (res.data.user.role === "maintenance") {
+      } else if (res.data.user.role === "maintenance" || res.data.user.role === "Maintenance") {
         navigate("/maintenance-dashboard");
       } else {
         navigate("/");
