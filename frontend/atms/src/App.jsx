@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import "./styling/global-style.css"
 
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import Login from "./pages/UserRegisteration_Pages/Login";
+import Signup from "./pages/UserRegisteration_Pages/Signup";
 import axios from "axios";
 
 import LandlordLayout from "./pages/Lanlord_Pages/LanlordLayout";
@@ -53,10 +53,10 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-
+          
           <Route path="/landlord" element={<LandlordLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="properties" element={<PropertiesPage />} />
