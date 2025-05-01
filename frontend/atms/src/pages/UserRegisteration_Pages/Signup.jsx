@@ -4,6 +4,7 @@ import AuthContext from "../../context/AuthContext";
 import "../../styling/UserRegisterationStyling/login.css";
 import show from "../../../src/assets/show.png";
 import hide from "../../../src/assets/hide.png";
+// import { ToastContainer } from "react-toastify";
 
 const Signup = () => {
   const { register } = useContext(AuthContext);
@@ -22,6 +23,7 @@ const Signup = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black/50">
+      <ToastContainer />
       <div className="login-blur-bg" />
       <div className="absolute top-12 text-center z-10">
         <h1 className="text-4xl font-extrabold text-white drop-shadow-md">Property Hub</h1>
