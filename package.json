@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.4",
+    "lightningcss": "^1.29.3",
     "recharts": "^2.15.3"
   }
 }
