@@ -1,7 +1,12 @@
-function ProfilePage(){
-    return(
-        <h1>Profile</h1>
-    )
+import React from "react";
+import Profile from "./Profile";
+
+function ProfilePage() {
+  return (
+    <div>
+      <Profile />
+    </div>
+  );
 }
 
 export default ProfilePage;
