@@ -26,6 +26,13 @@ const incomeByProperty = [
   { name: "Greenview Homes", value: 1900 },
 ];
 
+const rentalStatusData = [
+  { tenant: "Alice Johnson", property: "Maple Apartments", status: "Received" },
+  { tenant: "Bob Smith", property: "Sunset Villas", status: "Due" },
+  { tenant: "Carla Ruiz", property: "Downtown Lofts", status: "Received" },
+  { tenant: "Daniel Kim", property: "Greenview Homes", status: "Due" },
+];
+
 
 const HomePage = () => {
   return (
@@ -51,6 +58,42 @@ const HomePage = () => {
           />
         ))}
       </div>
+
+    {/* Rental Status Card */}
+    <div className="bg-white p-6 rounded-xl shadow col-span-1 lg:col-span-2">
+    <h3 className="text-lg font-semibold text-gray-700 mb-4">Rental Payment Status</h3>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200 text-sm">
+        <thead className="bg-blue-50">
+          <tr>
+            <th className="px-4 py-2 text-left font-semibold text-gray-600">Tenant</th>
+            <th className="px-4 py-2 text-left font-semibold text-gray-600">Property</th>
+            <th className="px-4 py-2 text-left font-semibold text-gray-600">Status</th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-100">
+          {rentalStatusData.map((item, idx) => (
+            <tr key={idx}>
+              <td className="px-4 py-2 text-gray-800">{item.tenant}</td>
+              <td className="px-4 py-2 text-gray-600">{item.property}</td>
+              <td className="px-4 py-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    item.status === "Received"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <br />
 
       {/* Maintenance Summary */}
       <div className="bg-white p-6 rounded-xl shadow">
