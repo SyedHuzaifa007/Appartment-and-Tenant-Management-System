@@ -3,6 +3,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend, PieChart, Pie, Cell
 } from "recharts";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 
 const incomeExpenseData = [
@@ -35,9 +37,30 @@ const rentalStatusData = [
 
 
 const HomePage = () => {
+
+  useEffect(() => {
+    console.log("In UseEffect");
+    const shouldShowToast = sessionStorage.getItem("showLoginToast");
+    console.log(shouldShowToast);
+    if (shouldShowToast === "true") {
+      console.log("Inside condition")
+      console.log(shouldShowToast);
+      toast.success("Login successful!", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+      sessionStorage.removeItem("showLoginToast");
+    }
+  }, []);
+  
+  
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+     <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Landlord Dashboard</h1>
+     <br />
 
       {/* Top Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

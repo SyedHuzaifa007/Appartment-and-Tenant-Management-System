@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 const AuthContext = createContext();
 
@@ -17,35 +18,46 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const register = async (name, email, password, role, navigate) => {
+const register = async (name, email, password, role, navigate) => {
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password, role }),
+    });
+
+    const text = await response.text(); 
+    let data;
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, role }),
-      });
-
-      const text = await response.text(); 
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (jsonError) {
-        console.error("Error parsing JSON:", jsonError);
-        throw new Error("Invalid response from server");
-      }
-
-      if (!response.ok) {
-        throw new Error(data.message || "Signup failed!");
-      }
-
-      setUser(data.user);
-      alert("Signup successful!");
-      navigate("/login"); 
-    } catch (error) {
-      console.error("Signup error:", error.message);
-      alert(error.message);
+      data = JSON.parse(text);
+    } catch (jsonError) {
+      console.error("Error parsing JSON:", jsonError);
+      throw new Error("Invalid response from server");
     }
-  };
+
+    if (!response.ok) {
+      throw new Error(data.message || "Signup failed!");
+    }
+
+    setUser(data.user);
+    navigate("/login");
+    toast.success("Signup successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      pauseOnHover: true,
+      theme: "colored",
+    });
+  } catch (error) {
+    console.error("Signup error:", error.message);
+    toast.error(error.message, {
+      position: "top-right",
+      autoClose: 3000,
+      pauseOnHover: true,
+      theme: "colored",
+    });
+  }
+};
+
 
   const login = async (name, password, navigate) => {
     try {
@@ -55,17 +67,26 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", res.data.token);
       setUser(res.data.user);
       if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {
-        navigate("/landlord");
+        sessionStorage.setItem("showLoginToast", "true");
+        console.log(sessionStorage.getItem("showLoginToast"))
+        navigate("/landlord/home");
       } else if (res.data.user.role === "tenant" || res.data.user.role === "Tenant") {
+        sessionStorage.setItem("showLoginToast", "true");
         navigate("/tenant-dashboard");
       } else if (res.data.user.role === "maintenance" || res.data.user.role === "Maintenance") {
+        sessionStorage.setItem("showLoginToast", "true");
         navigate("/maintenance-dashboard");
       } else {
         navigate("/");
       }
     } catch (error) {
       console.error("Login error:", error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || "Login failed. Please try again.");
+      toast.error("Login failed. Check credentials.", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: true,
+        theme: "colored",
+      });
     }
   };
 
