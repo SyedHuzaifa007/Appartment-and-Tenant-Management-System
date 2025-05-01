@@ -1,0 +1,213 @@
+/* Page Wrapper */
+.tenant-page {
+    font-family: sans-serif;
+    background-color: #f9fafb;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  
+  /* Heading */
+  .tenant-page h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tenant-page p.subtext {
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+  
+  /* Tabs */
+  .tab-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tab-buttons button {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .tab-active {
+    background-color: #2563eb;
+    color: #fff;
+  }
+  
+  .tab-inactive {
+    background-color: #e5e7eb;
+    color: #000;
+  }
+  
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #22c55e;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 9999;
+  }
+  
+  /* Card */
+  .card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  
+  /* Form Styles */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .input-icon-wrapper {
+    position: relative;
+  }
+  
+  .input-icon-wrapper span {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+  }
+  
+  .input-icon-wrapper input {
+    width: 100%;
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    border-radius: 5px;
+    border: 1px solid #d1d5db;
+  }
+  
+  /* Payment Method Box */
+  .payment-method-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid #d1d5db;
+    padding: 0.75rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Submit Button */
+  .submit-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563eb;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .submit-button:hover{
+    background-color:#0e3a9b;
+  }
+  
+  .info-text {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+  }
+  
+  /* Summary */
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-total {
+    font-weight: bold;
+    margin-top: 0.5rem;
+  }
+  
+  /* Payment Methods List */
+  .method-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .method-container .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  /* Add Method Button */
+  .add-method-btn {
+    background-color: #2563eb;
+    color: #fff;
+    padding: 0.75rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  .add-method-btn:hover{
+    background-color:#0e3a9b;
+  }
+  
+  /* Table Styles */
+  .table-wrapper {
+    overflow-x: auto;
+    max-width: 900px;
+  }
+  
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+  
+  .history-table th {
+    background-color: #f3f4f6;
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .history-table td {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .badge-paid {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  
+  .download-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2563eb;
+    font-size: 0.9rem;
+  }
