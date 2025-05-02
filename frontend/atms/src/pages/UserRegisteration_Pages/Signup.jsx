@@ -4,7 +4,7 @@ import AuthContext from "../../context/AuthContext";
 import "../../styling/UserRegisterationStyling/login.css";
 import show from "../../../src/assets/show.png";
 import hide from "../../../src/assets/hide.png";
-// import { ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 const Signup = () => {
   const { register } = useContext(AuthContext);

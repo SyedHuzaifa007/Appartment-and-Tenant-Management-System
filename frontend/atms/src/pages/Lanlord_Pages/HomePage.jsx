@@ -67,7 +67,7 @@ const HomePage = () => {
         <Card title="Total Properties" value="12" />
         <Card title="Active Tenants" value="38" />
         <Card title="Pending Maintenance" value="4" />
-        <Card title="Total Income (This Month)" value="$12,400" />
+        <Card textColor="text-green-600" title="Total Income (This Month)" value="PKR 12,400" />
       </div>
 
       {/* Expense Summary Cards */}
@@ -76,7 +76,7 @@ const HomePage = () => {
           <Card
             key={item.name}
             title={item.name}
-            value={`$${item.amount.toLocaleString()}`}
+            value={`PKR ${item.amount.toLocaleString()}`}
             textColor="text-red-600"
           />
         ))}
