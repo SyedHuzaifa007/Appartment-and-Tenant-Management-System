@@ -61,6 +61,85 @@ const StaffManagement = () => {
   const [activeTab, setActiveTab] = useState("staff");
   const [staffList, setStaffList] = useState(initialStaff);
   const [jobs, setJobs] = useState(initialJobs);
+  const [modalType, setModalType] = useState(null);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    role: "",
+    email: "",
+    phone: "",
+    properties: "",
+    description: "",
+    location: "",
+    property: "",
+    status: "Scheduled",
+  });
+
+  const openModal = (type, staff = null) => {
+    setModalType(type);
+    setSelectedStaff(staff);
+    if (staff) {
+      setFormData({
+        name: staff.name,
+        role: staff.role,
+        email: staff.email,
+        phone: staff.phone,
+        properties: staff.properties,
+      });
+    } else {
+      setFormData({
+        name: "",
+        role: "",
+        email: "",
+        phone: "",
+        properties: "",
+        description: "",
+        location: "",
+        property: "",
+        status: "Scheduled",
+      });
+    }
+  };
+
+  const closeModal = () => {
+    setModalType(null);
+    setSelectedStaff(null);
+  };
+
+  const handleSubmit = () => {
+    if (modalType === "add") {
+      const newStaff = {
+        id: Date.now(),
+        ...formData,
+        currentJobs: 0,
+      };
+      setStaffList((prev) => [...prev, newStaff]);
+    } else if (modalType === "edit" && selectedStaff) {
+      setStaffList((prev) =>
+        prev.map((s) =>
+          s.id === selectedStaff.id ? { ...s, ...formData } : s
+        )
+      );
+    } else if (modalType === "assign" && selectedStaff) {
+      const newJob = {
+        id: Date.now(),
+        description: formData.description,
+        location: formData.location,
+        property: formData.property,
+        assignedTo: selectedStaff.name,
+        status: formData.status,
+      };
+      setJobs((prev) => [...prev, newJob]);
+      setStaffList((prev) =>
+        prev.map((s) =>
+          s.id === selectedStaff.id
+            ? { ...s, currentJobs: s.currentJobs + 1 }
+            : s
+        )
+      );
+    }
+    closeModal();
+  };
 
   const handleStatusChange = (jobId, newStatus) => {
     setJobs((prevJobs) =>
@@ -70,67 +149,26 @@ const StaffManagement = () => {
     );
   };
 
-  const handleAddStaff = () => {
-    const name = prompt("Enter staff member name:");
-    const role = prompt("Enter role:");
-    const email = prompt("Enter email:");
-    const phone = prompt("Enter phone number:");
-    const properties = prompt("Enter properties assigned:");
-
-    if (!name || !role || !email || !phone || !properties) return alert("All fields are required.");
-
-    const newStaff = {
-      id: Date.now(),
-      name,
-      role,
-      email,
-      phone,
-      properties,
-      currentJobs: 0,
-    };
-
-    setStaffList((prev) => [...prev, newStaff]);
-  };
-
-  const handleAssignJob = (staff) => {
-    const description = prompt("Enter job description:");
-    const location = prompt("Enter job location:");
-    const property = prompt("Enter property name:");
-    const status = prompt("Enter job status (Scheduled/In Progress/Pending):");
-
-    if (!description || !location || !property || !status) return alert("All fields are required.");
-
-    const newJob = {
-      id: Date.now(),
-      description,
-      location,
-      property,
-      assignedTo: staff.name,
-      status,
-    };
-
-    setJobs((prev) => [...prev, newJob]);
-    setStaffList((prev) =>
-      prev.map((s) =>
-        s.id === staff.id ? { ...s, currentJobs: s.currentJobs + 1 } : s
-      )
-    );
-  };
-
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">Staff Management</h1>
-      <p className="text-gray-600 mb-6">Manage your maintenance staff and assign tasks</p>
+      <p className="text-gray-600 mb-6">
+        Manage your maintenance staff and assign tasks
+      </p>
 
       <div className="flex gap-4 mb-6">
         <button
-          className={`px-4 py-2 rounded ${activeTab === "staff" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+          className={`px-4 py-2 rounded ${
+            activeTab === "staff" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => setActiveTab("staff")}
         >
           Staff Members
         </button>
         <button
-          className={`px-4 py-2 rounded ${activeTab === "jobs" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+          className={`px-4 py-2 rounded ${
+            activeTab === "jobs" ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => setActiveTab("jobs")}
         >
           Maintenance Jobs
@@ -138,7 +176,7 @@ const StaffManagement = () => {
         {activeTab === "staff" && (
           <button
             className="ml-auto px-4 py-2 bg-blue-500 text-white rounded"
-            onClick={handleAddStaff}
+            onClick={() => openModal("add")}
           >
             + Add Staff Member
           </button>
@@ -151,15 +189,28 @@ const StaffManagement = () => {
             <div key={staff.id} className="bg-white shadow rounded-lg p-4">
               <h2 className="text-xl font-semibold">{staff.name}</h2>
               <p className="text-gray-500">{staff.role}</p>
-              <p className="mt-2"><strong>Email:</strong> {staff.email}</p>
-              <p><strong>Phone:</strong> {staff.phone}</p>
-              <p><strong>Properties:</strong> {staff.properties}</p>
-              <p><strong>Current Jobs:</strong> {staff.currentJobs} active</p>
+              <p className="mt-2">
+                <strong>Email:</strong> {staff.email}
+              </p>
+              <p>
+                <strong>Phone:</strong> {staff.phone}
+              </p>
+              <p>
+                <strong>Properties:</strong> {staff.properties}
+              </p>
+              <p>
+                <strong>Current Jobs:</strong> {staff.currentJobs} active
+              </p>
               <div className="flex gap-2 mt-4">
-                <button className="flex-1 border px-3 py-1 rounded text-sm">📩 Contact</button>
+                <button
+                  className="flex-1 border px-3 py-1 rounded text-sm"
+                  onClick={() => openModal("edit", staff)}
+                >
+                  ✏️ Edit
+                </button>
                 <button
                   className="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm"
-                  onClick={() => handleAssignJob(staff)}
+                  onClick={() => openModal("assign", staff)}
                 >
                   🛠 Assign Job
                 </button>
@@ -219,8 +270,46 @@ const StaffManagement = () => {
           </tbody>
         </table>
       )}
+
+      {modalType && (
+        <div className="fixed inset-0 bg-white/30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">
+              {modalType === "add"
+                ? "Add Staff Member"
+                : modalType === "edit"
+                ? "Edit Contact Information"
+                : "Assign Job"}
+            </h2>
+            {modalType !== "assign" ? (
+              <>
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} />
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                <input className="w-full mb-4 p-2 border rounded" placeholder="Properties" value={formData.properties} onChange={(e) => setFormData({ ...formData, properties: e.target.value })} />
+              </>
+            ) : (
+              <>
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Job Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Location" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} />
+                <input className="w-full mb-2 p-2 border rounded" placeholder="Property" value={formData.property} onChange={(e) => setFormData({ ...formData, property: e.target.value })} />
+                <select className="w-full mb-4 p-2 border rounded" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+                  <option value="Scheduled">Scheduled</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Pending">Pending</option>
+                </select>
+              </>
+            )}
+            <div className="flex justify-end gap-2">
+              <button className="px-4 py-2 bg-gray-300 rounded" onClick={closeModal}>Cancel</button>
+              <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={handleSubmit}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Staff;
+export default StaffManagement;
