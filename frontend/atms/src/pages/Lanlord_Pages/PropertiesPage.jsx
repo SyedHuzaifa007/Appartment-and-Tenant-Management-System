@@ -10,15 +10,23 @@ import axios from "axios";
 
 function PropertiesPage() {
     const [propertiesdata, setProperties] = useState([]);
+    const [token, setToken] = useState(localStorage.getItem("token"));
+
     useEffect(() => {
-        axios.get("/properties")
-            .then(res => {
-                console.log("Fetched data:", res.data);
-                setProperties(res.data.data);
+        if (token) {
+            axios.get("http://localhost:5000/api/property", {
+                headers: { Authorization: `Bearer ${token}` },
             })
-            .catch(err => console.error("Failed to fetch properties:", err));
-    }, []);
-    
+                .then(res => {
+                    setProperties(res.data);
+                })
+                .catch(err => {
+                    console.error("Failed to fetch properties");
+                    setProperties([]);
+                });
+        }
+    }, [token]);    
+
 
     const navigate = useNavigate();
 
@@ -31,7 +39,9 @@ function PropertiesPage() {
         if (!confirmDelete) return;
 
         const propertyId = propertiesdata[index]._id;
-        axios.delete(`/properties/${propertyId}`)
+        axios.delete(`http://localhost:5000/api/property/${propertyId}`,{
+            headers: { Authorization: `Bearer ${token}` },
+        })
             .then(() => setProperties(prev => prev.filter((_, i) => i !== index)))
             .catch(err => console.error("Delete failed:", err));
     };
@@ -50,7 +60,8 @@ function PropertiesPage() {
         if (index !== null) {
             const property = propertiesdata[index];
             if (property) {
-                setFormData({ ...property, id: index });
+                setFormData({ ...property, id: property._id });
+
             }
         } else {
             setFormData({
@@ -102,7 +113,9 @@ function PropertiesPage() {
         if (Object.keys(newErrors).length > 0) return;
 
         if (formData.id) {
-            axios.put(`/properties/${formData.id}`, formData)
+            axios.put(`http://localhost:5000/api/property/${formData.id}`,formData,{
+                headers: { Authorization: `Bearer ${token}` },
+            })
                 .then(() => {
                     setProperties(prev => prev.map(prop => prop._id === formData.id ? { ...formData } : prop));
                     resetForm();
@@ -110,9 +123,11 @@ function PropertiesPage() {
                 .catch(err => {
                     console.error("Update failed:", err);
                     alert("Could not save changes. Please try again.");
-                });                
+                });
         } else {
-            axios.post("/properties", formData)
+            axios.post("http://localhost:5000/api/property",formData,{
+                headers: { Authorization: `Bearer ${token}` },
+            })
                 .then(res => {
                     setProperties(prev => [...prev, res.data]);
                     resetForm();

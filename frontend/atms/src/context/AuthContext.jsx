@@ -13,50 +13,50 @@ export const AuthProvider = ({ children }) => {
       axios.get("http://localhost:5000/api/auth/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null));
+        .then(res => setUser(res.data))
+        .catch(() => setUser(null));
     }
   }, [token]);
 
-const register = async (name, email, password, role, navigate) => {
-  try {
-    const response = await fetch("http://localhost:5000/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, role }),
-    });
-
-    const text = await response.text(); 
-    let data;
+  const register = async (name, email, password, role, navigate) => {
     try {
-      data = JSON.parse(text);
-    } catch (jsonError) {
-      console.error("Error parsing JSON:", jsonError);
-      throw new Error("Invalid response from server");
-    }
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role }),
+      });
 
-    if (!response.ok) {
-      throw new Error(data.message || "Signup failed!");
-    }
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (jsonError) {
+        console.error("Error parsing JSON:", jsonError);
+        throw new Error("Invalid response from server");
+      }
 
-    setUser(data.user);
-    navigate("/login");
-    toast.success("Signup successful!", {
-      position: "top-right",
-      autoClose: 3000,
-      pauseOnHover: true,
-      theme: "colored",
-    });
-  } catch (error) {
-    console.error("Signup error:", error.message);
-    toast.error(error.message, {
-      position: "top-right",
-      autoClose: 3000,
-      pauseOnHover: true,
-      theme: "colored",
-    });
-  }
-};
+      if (!response.ok) {
+        throw new Error(data.message || "Signup failed!");
+      }
+
+      setUser(data.user);
+      navigate("/login");
+      toast.success("Signup successful!", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+    } catch (error) {
+      console.error("Signup error:", error.message);
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: true,
+        theme: "colored",
+      });
+    }
+  };
 
 
   const login = async (name, password, navigate) => {
@@ -94,7 +94,7 @@ const register = async (name, email, password, role, navigate) => {
     setToken(null);
     localStorage.removeItem("token");
     setUser(null);
-    navigate("/login"); 
+    navigate("/login");
   };
 
   return (
