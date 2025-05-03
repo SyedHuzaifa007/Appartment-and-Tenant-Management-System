@@ -156,32 +156,38 @@ const StaffManagement = () => {
         Manage your maintenance staff and assign tasks
       </p>
 
-      <div className="flex gap-4 mb-6">
+              <div className="flex items-center gap-4 mb-6">
         <button
-          className={`px-4 py-2 rounded ${
-            activeTab === "staff" ? "bg-blue-600 text-white" : "bg-gray-200"
+          className={`px-4 py-2 rounded transition-colors duration-200 ${
+            activeTab === "staff"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-black-700 hover:bg-blue-200"
           }`}
           onClick={() => setActiveTab("staff")}
         >
           Staff Members
         </button>
         <button
-          className={`px-4 py-2 rounded ${
-            activeTab === "jobs" ? "bg-blue-600 text-white" : "bg-gray-200"
+          className={`px-4 py-2 rounded transition-colors duration-200 ${
+            activeTab === "jobs"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-black-700 hover:bg-blue-200"
           }`}
           onClick={() => setActiveTab("jobs")}
         >
           Maintenance Jobs
         </button>
+
         {activeTab === "staff" && (
           <button
-            className="ml-auto px-4 py-2 bg-blue-500 text-white rounded"
+            className="ml-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             onClick={() => openModal("add")}
           >
             + Add Staff Member
           </button>
         )}
       </div>
+
 
       {activeTab === "staff" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -203,17 +209,19 @@ const StaffManagement = () => {
               </p>
               <div className="flex gap-2 mt-4">
                 <button
-                  className="flex-1 border px-3 py-1 rounded text-sm"
-                  onClick={() => openModal("edit", staff)}
-                >
-                  ✏️ Edit
-                </button>
+  className="flex-1 border px-3 py-1 rounded text-sm hover:bg-gray-100"
+  onClick={() => openModal("edit", staff)}
+>
+  ✏️ Edit
+</button>
+
                 <button
-                  className="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm"
-                  onClick={() => openModal("assign", staff)}
-                >
-                  🛠 Assign Job
-                </button>
+  className="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+  onClick={() => openModal("assign", staff)}
+>
+  🛠 Assign Job
+</button>
+
               </div>
             </div>
           ))}
@@ -253,17 +261,18 @@ const StaffManagement = () => {
                 </td>
                 <td className="px-4 py-2 flex gap-2">
                   <button
-                    onClick={() => handleStatusChange(job.id, "Completed")}
-                    className="text-green-600 text-xs hover:underline"
-                  >
-                    ✅ Complete
-                  </button>
-                  <button
-                    onClick={() => handleStatusChange(job.id, "Cancelled")}
-                    className="text-red-600 text-xs hover:underline"
-                  >
-                    ❌ Cancel
-                  </button>
+  onClick={() => handleStatusChange(job.id, "Completed")}
+  className="text-green-600 text-xs hover:underline hover:text-green-800"
+>
+  ✅ Complete
+</button>
+<button
+  onClick={() => handleStatusChange(job.id, "Cancelled")}
+  className="text-red-600 text-xs hover:underline hover:text-red-800"
+>
+  ❌ Cancel
+</button>
+
                 </td>
               </tr>
             ))}
