@@ -5,40 +5,16 @@ import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios";
 
 function PropertiesPage() {
-    const [propertiesdata, setProperties] = useState([{
-        id: '123',
-        image: "",
-        title: 'Sunset Apartment',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    },
-    {
-        id: '456',
-        image: "",
-        title: 'Silicon Apartment',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    },
-    {
-        id: '789',
-        image: "",
-        title: 'Villa',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    }, {
-        id: '109',
-        image: "",
-        title: 'Valencia Apartment',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    }]);
+    const [propertiesdata, setProperties] = useState([]);
+    useEffect(() => {
+        axios.get("/properties")
+            .then(res => setProperties(res.data))
+            .catch(err => console.error("Failed to fetch properties:", err));
+    }, []);
 
     const navigate = useNavigate();
 
@@ -48,10 +24,14 @@ function PropertiesPage() {
 
     const handleDeletion = (index, name) => {
         const confirmDelete = window.confirm(`Do you wish to delete Property: ${name}?`);
-        if (confirmDelete) {
-            setProperties((prevProperty) => prevProperty.filter((_, i) => i !== index));
-        }
-    }
+        if (!confirmDelete) return;
+
+        const propertyId = propertiesdata[index]._id;
+        axios.delete(`/properties/${propertyId}`)
+            .then(() => setProperties(prev => prev.filter((_, i) => i !== index)))
+            .catch(err => console.error("Delete failed:", err));
+    };
+
 
     const [formVisible, setFormVisible] = useState(false);
     const [errors, setErrors] = useState({});
@@ -85,7 +65,7 @@ function PropertiesPage() {
     };
     const handleInputChange = (e) => {
         const { name, type, value, files } = e.target;
-    
+
         if (type === "file") {
             const file = files[0];
             if (file) {
@@ -98,14 +78,14 @@ function PropertiesPage() {
             }
         } else {
             setFormData({ ...formData, [name]: value });
-    
+
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 [name]: value.trim() === "",
             }));
         }
     };
-    
+
     const saveProperty = () => {
         let newErrors = {};
         Object.keys(formData).forEach((key) => {
@@ -115,32 +95,31 @@ function PropertiesPage() {
         });
 
         setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) {
-            return;
+        if (Object.keys(newErrors).length > 0) return;
+
+        if (formData.id) {
+            axios.put(`/properties/${formData.id}`, formData)
+                .then(() => {
+                    setProperties(prev => prev.map(prop => prop._id === formData.id ? { ...formData } : prop));
+                    resetForm();
+                })
+                .catch(err => {
+                    console.error("Update failed:", err);
+                    alert("Could not save changes. Please try again.");
+                });                
+        } else {
+            axios.post("/properties", formData)
+                .then(res => {
+                    setProperties(prev => [...prev, res.data]);
+                    resetForm();
+                })
+                .catch(err => console.error("Create failed:", err));
         }
+    };
 
-        setProperties((prevProperty) => {
-            if (formData.id !== null && typeof formData.id === 'number') {
-                return prevProperty.map((property, index) =>
-                    index === formData.id
-                        ? { ...formData, tenants: property.tenants, id: property.id }
-                        : property
-                );
-            } else {
-                const newId = Date.now().toString();
-                return [...prevProperty, { ...formData, id: newId, tenants: '0' }];
-            }
-        });        
-        
-
+    const resetForm = () => {
         setFormVisible(false);
-        setFormData({
-            id: null,
-            image: "",
-            title: "",
-            address: "",
-            units: "",
-        });
+        setFormData({ id: null, image: "", title: "", address: "", units: "" });
         setErrors({});
     };
 
@@ -170,10 +149,10 @@ function PropertiesPage() {
                                 </div>
                                 <div className="tenantsBox">
                                     <img src={tenantsIcon} alt="" className="iconTenants" />
-                                    <p>{obj.tenants} Tenants</p>
+                                    <p>{obj.tenants?.length || 0} Tenants</p>
                                 </div>
                             </div>
-                            <button className="viewBtn" onClick={() => handleNavigation(obj.id, obj.title, obj.address, obj.units, obj.tenants)}>View Property</button>
+                            <button className="viewBtn" onClick={() => handleNavigation(obj._id, obj.title, obj.address, obj.units, obj.tenants)}>View Property</button>
                             <div className="delete_edit">
                                 <button onClick={() => openPropertyForm(index)} className="editBtn"><img src={editIcon} className="editIcon" /><p className="editText">Edit</p></button>
                                 <button onClick={() => handleDeletion(index, obj.title)} className="deleteBtn"><img src={deleteIcon} className="deleteIcon" /><p className="deleteText">Delete</p></button>
@@ -198,7 +177,7 @@ function PropertiesPage() {
                             <input placeholder="0" type="number" name="units" value={formData.units} onChange={handleInputChange} className={errors.units ? "error" : ""} />
 
                             <label>Property Image</label>
-                            <input type="file"  name="image" onChange={handleInputChange} className={errors.image ? "error" : ""} accept="image/*"/>
+                            <input type="file" name="image" onChange={handleInputChange} className={errors.image ? "error" : ""} accept="image/*" />
 
                             <div className="button-container">
                                 <button type="button" className='save-btn' onClick={saveProperty}>Save</button>
