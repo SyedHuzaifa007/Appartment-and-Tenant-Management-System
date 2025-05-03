@@ -1,6 +1,9 @@
+import Staff from './Staff'
 function StaffPage(){
     return(
-        <h1>Staff</h1>
+        <div>
+            <Staff />
+        </div>
     )
 }
 
