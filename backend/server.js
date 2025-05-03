@@ -23,6 +23,13 @@ app.get("/", (req, res) => {
   res.send("Backend running!");
 });
 
+const workerRoutes = require("./routes/worker");
+const requestRoutes = require("./routes/maintenance_requests");
+
+app.use("/api/workers", workerRoutes);
+app.use("/api/requests", requestRoutes);
+
+
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
