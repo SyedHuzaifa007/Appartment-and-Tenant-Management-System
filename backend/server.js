@@ -4,10 +4,8 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./routes/auth"); 
-const profileRoutes = require("./routes/UserProfileauth");
 const propertyRoutes = require("./routes/property");
 const tenantRoutes = require("./routes/tenant");
-
 
 const app = express();
 app.use(express.json());
@@ -30,10 +28,9 @@ app.use(cors({
     credentials: true
   }));
 
-app.use("/api/auth", authRoutes);
-app.use("/api", profileRoutes); 
-app.use("/api/properties", propertyRoutes);
-app.use("/api/tenants", tenantRoutes);
+app.use("/api/auth", authRoutes); 
+app.use("/api/property", propertyRoutes);
+app.use("/api/tenant", tenantRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

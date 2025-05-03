@@ -2,14 +2,13 @@ const express = require("express");
 const router = express.Router();
 const TenantProfile = require("../models/TenantProfile");
 const Property = require("../models/Property");
-const { authMiddleware } = require("./auth");
 
 // Add Tenant
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { user, cnic, phone, unitAddress, rent, dueDate, property, image } = req.body;
+    const { user, cnic, phone, unitAddress, rent, dueDate, property, image, landlord } = req.body;
 
-    const propertyDoc = await Property.findOne({ _id: property, landlord: req.user.id });
+    const propertyDoc = await Property.findOne({ _id: property, landlord: landlord });
     if (!propertyDoc) return res.status(403).json({ message: "Unauthorized or invalid property" });
 
     const tenant = new TenantProfile({
@@ -20,7 +19,7 @@ router.post("/", authMiddleware, async (req, res) => {
       rent,
       dueDate,
       property,
-      landlord: req.user.id,
+      landlord,
       image
     });
 
@@ -36,9 +35,10 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 // Get all tenants for a landlord
-router.get("/", authMiddleware, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const tenants = await TenantProfile.find({ landlord: req.user.id }).populate("user").populate("property");
+    const { landlord } = req.query;
+    const tenants = await TenantProfile.find({ landlord }).populate("user").populate("property");
     res.json(tenants);
   } catch (err) {
     res.status(500).json({ message: "Error fetching tenants" });
@@ -46,10 +46,10 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Edit Tenant
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const updated = await TenantProfile.findOneAndUpdate(
-      { _id: req.params.id, landlord: req.user.id },
+    const updated = await TenantProfile.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true }
     );
@@ -61,9 +61,9 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 // Delete Tenant
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await TenantProfile.findOneAndDelete({ _id: req.params.id, landlord: req.user.id });
+    const deleted = await TenantProfile.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Tenant not found" });
 
     await Property.updateOne(

@@ -12,9 +12,13 @@ function PropertiesPage() {
     const [propertiesdata, setProperties] = useState([]);
     useEffect(() => {
         axios.get("/properties")
-            .then(res => setProperties(res.data))
+            .then(res => {
+                console.log("Fetched data:", res.data);
+                setProperties(res.data.data);
+            })
             .catch(err => console.error("Failed to fetch properties:", err));
     }, []);
+    
 
     const navigate = useNavigate();
 
