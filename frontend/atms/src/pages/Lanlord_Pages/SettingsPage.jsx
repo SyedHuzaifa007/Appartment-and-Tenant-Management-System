@@ -1,6 +1,5 @@
 import moonIcon from '../../assets/moonIcon.png'
 import '../../styling/LandlordStyling/SettingsPage.css'
-import lockIcon from '../../assets/LockIcon.png'
 import { useState } from 'react'
 
 function SettingsPage({ theme, handleThemeToggle }) {
@@ -35,12 +34,12 @@ function SettingsPage({ theme, handleThemeToggle }) {
 
     return (
         <div>
-            <h1>Settings</h1>
+            <h2 className="profile-title text-center">Settings</h2>
 
             <div className='menuBar'>
                 <label onClick={changeToGeneral} className={generalMenu ? 'selected' : ''}>General</label>
-                <label onClick={changeToSecurity} className={securityMenu ? 'selected' : ''}> Privacy & Security</label>
                 <label onClick={changeToPayment} className={paymentMenu ? 'selected' : ''}> Payments</label>
+                <label onClick={changeToSecurity} className={securityMenu ? 'selected' : ''}> Privacy & Security</label>
             </div>
 
 
@@ -63,21 +62,6 @@ function SettingsPage({ theme, handleThemeToggle }) {
                 </div>
             </div>}
 
-            {securityMenu && <div className='security'>
-                <div className='mainText'>
-                    <h2>Privacy & Security Settings</h2>
-                    <p className='smallText'>Manage your privacy and security preferences</p>
-                </div>
-                <div className='row'>
-                    <div className='imgText'>
-                        <img src={lockIcon} />
-                        <p className='text'>Password</p>
-                    </div>
-                    <button className='changeBtn'>Change Password</button>
-                </div>
-                <button onClick={handleDeletion} className='delBtn'>Delete Account</button>
-            </div>}
-
             {paymentMenu && <div className='payment'>
                 <div className='mainText'>
                     <h2>Payment Settings</h2>
@@ -92,6 +76,15 @@ function SettingsPage({ theme, handleThemeToggle }) {
                 </div>
                 <button className='saveBtn' onClick={handleSaveBtn}>Save Settings</button>
             </div>}
+
+            {securityMenu && <div className='security'>
+                <div className='mainText'>
+                    <h2>Privacy & Security Settings</h2>
+                    <p className='smallText'>Manage your privacy and security preferences</p>
+                </div>
+                <button onClick={handleDeletion} className='delBtn'>Delete Account</button>
+            </div>}
+
 
         </div>
     )

@@ -57,7 +57,7 @@ const Profile = () => {
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setPreviewImage(imageURL);
-            setFormData((prev) => ({ ...prev, photoUrl: imageURL })); // Temporary, replace with real upload logic
+            setFormData((prev) => ({ ...prev, photoUrl: imageURL })); 
         }
     };
 
@@ -117,7 +117,7 @@ const Profile = () => {
 
     return (
         <>
-            <h2 className="profile-title">My Profile</h2>
+            <h2 className="profile-title text-center">My Profile</h2>
             <div className="profile-container">
                 <div className="profile-content">
                     {/* Profile Picture */}
@@ -143,7 +143,7 @@ const Profile = () => {
                     <div className="profile-info">
                         <div className="profile-grid">
                             <div>
-                                <label className="input-label">Full Name</label>
+                                <label className="input-label">Username</label>
                                 <input
                                     type="text"
                                     name="name"
@@ -162,26 +162,7 @@ const Profile = () => {
                                     className="profile-input"
                                 />
                             </div>
-                            <div>
-                                <label className="input-label">Phone</label>
-                                <input
-                                    type="text"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </div>
-                            <div>
-                                <label className="input-label">Address</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </div>
+                           
                         </div>
 
                         <div className="button-group">
@@ -191,7 +172,7 @@ const Profile = () => {
 
                         {/* Password Change Section */}
                         <div className="password-section">
-                            <h3>Change Password</h3>
+                        <h3 className="text-lg font-semibold text-gray-700">Change Password</h3>
                             <label className="input-label">Current Password</label>
                             <input
                                 type="password"
@@ -208,7 +189,9 @@ const Profile = () => {
                                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                                 className="profile-input"
                             />
-                            <button className="save-button" onClick={handlePasswordChange}>Change Password</button>
+                            <br />
+                            <br />
+                            <button className="save-button" onClick={handlePasswordChange}>Reset Password</button>
                         </div>
                     </div>
                 </div>

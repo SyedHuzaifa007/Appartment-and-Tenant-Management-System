@@ -168,7 +168,6 @@ function StaffPage() {
                   &times;
                 </button>
 
-
                 <span className="text-sm text-gray-600 mb-2 sm:mb-0">
                   {request.description}
                 </span>
@@ -418,30 +417,26 @@ function StaffPage() {
               <div className="mt-4 flex justify-between">
                 <button
                   onClick={() => alert("Update Worker")}
-                  className="group flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-full transition-all duration-300 hover:rounded-md hover:px-4"
+                  className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:shadow transition"
                 >
                   <img
                     src="../../../src/assets/EditIcon_Black.png"
                     alt="Edit"
-                    className="h-5 w-5 object-contain transition-transform group-hover:scale-110"
+                    className="h-5 w-5 object-contain"
                   />
-                  <span className="hidden group-hover:inline-block transition-opacity duration-300">
-                    Update
-                  </span>
+                  <span className="text-black font-medium">Edit</span>
                 </button>
 
                 <button
                   onClick={() => handleDeleteWorker(worker._id)}
-                  className="group flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-full transition-all duration-300 hover:rounded-md hover:px-4"
+                  className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:shadow transition"
                 >
                   <img
                     src="../../../src/assets/DeleteIcon_Red.png"
                     alt="Delete"
-                    className="h-5 w-5 object-contain transition-transform group-hover:scale-110"
+                    className="h-5 w-5 object-contain"
                   />
-                  <span className="hidden group-hover:inline-block transition-opacity duration-300">
-                    Delete
-                  </span>
+                  <span className="text-red-500 font-medium">Delete</span>
                 </button>
               </div>
             </div>
