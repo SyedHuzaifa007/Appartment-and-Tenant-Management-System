@@ -1,35 +1,39 @@
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import { useEffect } from "react";
+import axiosInstance from "../../axiosInstance";
 
 function StaffPage() {
-  const [workers, setWorkers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [workers, setWorkers] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [assignedRequests, setAssignedRequests] = useState([]);
+
+  useEffect(() => {
+    axiosInstance
+      .get("/api/workers")
+      .then((res) => setWorkers(res.data))
+      .catch((err) => console.error(err));
+
+    axiosInstance
+      .get("/api/requests")
+      .then((res) => {
+        const allRequests = res.data.requests || [];
+        setRequests(allRequests.filter((req) => req.status === "Pending"));
+        setAssignedRequests(
+          allRequests.filter((req) => req.status === "Assigned")
+        );
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
   const [formData, setFormData] = useState({
     name: "",
     workerType: "",
     image: "",
     salary: "",
   });
-  
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      description: "Plumbing issue in Apt 12B",
-      assignedTo: "",
-      feedback: "",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      description: "AC not working in Apt 4A",
-      assignedTo: "",
-      feedback: "",
-      status: "Pending",
-    },
-  ]);
-
-  const [assignedRequests, setAssignedRequests] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,48 +41,96 @@ function StaffPage() {
   };
 
   const handleAddWorker = () => {
-    setWorkers((prev) => [...prev, { ...formData, id: workers.length + 1 }]);
-    setFormData({ name: "", workerType: "", image: "", salary: "" });
-    setShowForm(false);
+    const workerData = {
+      name: formData.name,
+      workerType: formData.workerType,
+      salary: formData.salary,
+      image: formData.image,
+    };
+
+    console.log("Worker Data to Send:", workerData);
+
+    axiosInstance
+      .post("/api/workers", workerData)
+      .then((res) => {
+        setWorkers((prev) => [...prev, res.data]);
+        setFormData({ name: "", workerType: "", image: "", salary: "" });
+        setShowForm(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Failed to add worker!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      });
   };
 
   const handleDeleteWorker = (id) => {
-    setWorkers((prev) => prev.filter((worker) => worker.id !== id));
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this worker?"
+    );
+    if (!confirmed) return;
+
+    axiosInstance
+      .delete(`/api/workers/${id}`)
+      .then(() => {
+        setWorkers((prev) => prev.filter((worker) => worker._id !== id));
+        toast.success("Worker deleted successfully", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Failed to delete worker", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      });
   };
 
   const handleAssignRequest = (workerId, requestId) => {
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.id === requestId
-          ? { ...req, assignedTo: workerId, status: "Assigned" }
-          : req
-      )
-    );
-
-    const assignedRequest = requests.find((req) => req.id === requestId);
-    if (assignedRequest) {
-      setAssignedRequests((prev) => [
-        ...prev,
-        { ...assignedRequest, assignedTo: workerId, status: "Assigned" },
-      ]);
-      setRequests((prev) => prev.filter((req) => req.id !== requestId));
-    }
-
-    toast.success("Request assigned successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-      pauseOnHover: true,
-      theme: "colored",
-    });
+    axiosInstance
+      .put(`/api/requests/${requestId}`, {
+        assignedTo: workerId,
+        status: "Assigned",
+      })
+      .then((res) => {
+        const updated = res.data;
+        setAssignedRequests((prev) => [...prev, updated]);
+        setRequests((prev) => prev.filter((req) => req.id !== requestId));
+        toast.success("Request assigned successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          pauseOnHover: true,
+          theme: "colored",
+        });
+      })
+      .catch((err) => console.error(err));
   };
 
   const handleFeedbackChange = (e, requestId) => {
-    const { value } = e.target;
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.id === requestId ? { ...req, feedback: value } : req
-      )
-    );
+    const feedback = e.target.value;
+    axiosInstance
+      .put(`/api/requests/${requestId}`, { feedback })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const handleDeclineRequest = (id, from = "pending") => {
+    axiosInstance
+      .delete(`/api/requests/${id}`)
+      .then(() => {
+        if (from === "pending") {
+          setRequests((prev) => prev.filter((req) => req.id !== id));
+        } else {
+          setAssignedRequests((prev) => prev.filter((req) => req.id !== id));
+        }
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -109,9 +161,7 @@ function StaffPage() {
                       "Are you sure you want to decline this request?"
                     );
                     if (confirmed) {
-                      setRequests((prev) =>
-                        prev.filter((req) => req.id !== request.id)
-                      );
+                      handleDeclineRequest(request.id, "pending");
                     }
                   }}
                 >
@@ -192,9 +242,7 @@ function StaffPage() {
                       "Are you sure you want to decline this assigned request?"
                     );
                     if (confirmed) {
-                      setAssignedRequests((prev) =>
-                        prev.filter((req) => req.id !== request.id)
-                      );
+                      handleDeclineRequest(request.id, "pending");
                     }
                   }}
                 >
@@ -267,6 +315,9 @@ function StaffPage() {
 
       {/* Section: Add Maintenance Worker */}
       <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-center">
+          Maintenance Workers
+        </h2>
         <button
           className="bg-blue-500 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-600 transform hover:scale-105 transition-all"
           onClick={() => setShowForm(!showForm)}
@@ -334,7 +385,7 @@ function StaffPage() {
             )}
 
             <button
-              className="w-full bg-green-500 text-white py-2 rounded-md shadow-md hover:bg-green-600 transform hover:scale-105 transition-all"
+              className="w-full bg-green-500 text-white py-2 rounded-md shadow-md hover:bg-green-600 transition-all"
               onClick={handleAddWorker}
             >
               Add Worker
@@ -344,56 +395,59 @@ function StaffPage() {
       )}
 
       {/* Section: Display Maintenance Workers */}
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {workers.map((worker) => (
-          <div
-            key={worker.id}
-            className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg"
-          >
-            <img
-              src={worker.image}
-              alt={worker.name}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
-            <h3 className="text-lg font-semibold text-gray-700">
-              {worker.name}
-            </h3>
-            <p className="text-sm text-gray-500">{worker.workerType}</p>
-            <p className="text-sm text-gray-500">${worker.salary}</p>
-            <div className="mt-4 flex justify-between">
-              <button
-                onClick={() => alert("Update Worker")}
-                className="group flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-full transition-all duration-300 hover:rounded-md hover:px-4"
-              >
-                <img
-                  src="../../../src/assets/EditIcon_Black.png"
-                  alt="Edit"
-                  className="h-5 w-5 object-contain transition-transform group-hover:scale-110"
-                />
-                <span className="hidden group-hover:inline-block transition-opacity duration-300">
-                  Update
-                </span>
-              </button>
+      {workers.length === 0 ? (
+        <p className="text-center text-gray-500 mt-8">No maintenance workers</p>
+      ) : (
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {workers.map((worker) => (
+            <div
+              key={worker._id}
+              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg"
+            >
+              <img
+                src={worker.image}
+                alt={worker.name}
+                className="w-full h-48 object-cover rounded-md mb-4"
+              />
+              <h3 className="text-lg font-semibold text-gray-700">
+                {worker.name}
+              </h3>
+              <p className="text-sm text-gray-500">{worker.workerType}</p>
+              <p className="text-sm text-gray-500">PKR {worker.salary}</p>
+              <div className="mt-4 flex justify-between">
+                <button
+                  onClick={() => alert("Update Worker")}
+                  className="group flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-full transition-all duration-300 hover:rounded-md hover:px-4"
+                >
+                  <img
+                    src="../../../src/assets/EditIcon_Black.png"
+                    alt="Edit"
+                    className="h-5 w-5 object-contain transition-transform group-hover:scale-110"
+                  />
+                  <span className="hidden group-hover:inline-block transition-opacity duration-300">
+                    Update
+                  </span>
+                </button>
 
-              <button
-                onClick={() => handleDeleteWorker(worker.id)}
-                className="group flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-full transition-all duration-300 hover:rounded-md hover:px-4"
-              >
-                <img
-                  src="../../../src/assets/DeleteIcon_Red.png"
-                  alt="Edit"
-                  className="h-5 w-5 object-contain transition-transform group-hover:scale-110"
-                />
-                <span className="hidden group-hover:inline-block transition-opacity duration-300">
-                  Delete
-                </span>
-              </button>
+                <button
+                  onClick={() => handleDeleteWorker(worker._id)}
+                  className="group flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-full transition-all duration-300 hover:rounded-md hover:px-4"
+                >
+                  <img
+                    src="../../../src/assets/DeleteIcon_Red.png"
+                    alt="Delete"
+                    className="h-5 w-5 object-contain transition-transform group-hover:scale-110"
+                  />
+                  <span className="hidden group-hover:inline-block transition-opacity duration-300">
+                    Delete
+                  </span>
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-
 export default StaffPage;
