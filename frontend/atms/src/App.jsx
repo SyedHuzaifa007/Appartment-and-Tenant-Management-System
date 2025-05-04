@@ -24,7 +24,11 @@ import TMaintainance from './pages/Tenant_Pages/TenantsMaintainancePage'
 import TProfile from './pages/Tenant_Pages/TenantsProfilePage'
 import TSettings from './pages/Tenant_Pages/TenantsSettings'
 
-import MaintenanceDashboard from "./pages/MaintenanceDashboard";
+import Maintenance_HomePage from "./pages/Maintenance_Pages/Maintenance_HomePage";
+import Maintenance_RequestsPage from "./pages/Maintenance_Pages/Maintenance_RequestPage";
+import Maintenance_ProfilePage from "./pages/Maintenance_Pages/Maintenance_ProfilePage";
+import Maintenance_SettingsPage from "./pages/Maintenance_Pages/Maintenance_SettingsPage";
+import Maintenance_Layout from "./pages/Maintenance_Pages/Maintenance_Layout";
 
 
 function App() {
@@ -75,7 +79,12 @@ function App() {
             <Route path="settings" element={<TSettings theme={theme} handleThemeToggle={handleThemeToggle} />} />
           </Route>
 
-          <Route path="/maintenance-dashboard" element={<MaintenanceDashboard />}></Route>
+          <Route path="/maintenance" element={<Maintenance_Layout />}>
+          <Route path="home" element={<Maintenance_HomePage />} />
+          <Route path="requests" element={<Maintenance_RequestsPage />} />
+          <Route path="profile" element={<Maintenance_ProfilePage />} />
+          <Route path="settings" element={<Maintenance_SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>
