@@ -1,17 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../../styling/LandlordStyling/ProfilePage.css";
-import tempImage from '../../assets/tempImage.png';
+import tempImage from "../../assets/tempImage.png";
 
 const Profile = () => {
     const [formData, setFormData] = useState({
-        fullName: "John Doe",
-        email: "admin@example.com",
-        phone: "+1 (555) 123-4567",
-        address: "123 Property Lane, Real Estate City, 90210",
-        photo: ""
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        photoUrl: ""
     });
 
     const [previewImage, setPreviewImage] = useState("");
+    const [initialData, setInitialData] = useState({});
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: "",
+        newPassword: ""
+    });
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get("/api/profile", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const { name, email, phone, address, photoUrl } = res.data;
+
+                const fullData = {
+                    name: name || "",
+                    email: email || "",
+                    phone: phone || "",
+                    address: address || "",
+                    photoUrl: photoUrl || ""
+                };
+
+                setFormData(fullData);
+                setInitialData(fullData);
+            } catch (err) {
+                console.error("Error fetching profile:", err);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -23,17 +57,62 @@ const Profile = () => {
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setPreviewImage(imageURL);
-            setFormData((prev) => ({ ...prev, photo: imageURL }));
+            setFormData((prev) => ({ ...prev, photoUrl: imageURL })); // Temporary, replace with real upload logic
         }
     };
 
-    const handleSave = () => {
-        console.log("Saving data:", formData);
-        alert("Profile saved!");
+    const handleSave = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.put(
+                "/api/profile",
+                {
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    address: formData.address,
+                    photoUrl: formData.photoUrl
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                alert("Profile saved successfully!");
+                setInitialData(formData);
+            }
+        } catch (err) {
+            console.error("Error saving profile:", err);
+            const errorMessage = err.response?.data?.message || err.message || "Failed to save profile";
+            alert(errorMessage);
+        }
     };
 
     const handleCancel = () => {
+        setFormData(initialData);
         alert("Changes cancelled.");
+    };
+
+    const handlePasswordChange = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.put(
+                "/api/change-password",
+                passwordData,
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+            alert("Password changed successfully!");
+            setPasswordData({ currentPassword: "", newPassword: "" });
+        } catch (err) {
+            console.error("Error changing password:", err);
+            alert(err.response?.data?.message || "Failed to change password");
+        }
     };
 
     return (
@@ -45,7 +124,7 @@ const Profile = () => {
                     <div className="profile-picture-section">
                         <div className="profile-picture">
                             <img
-                                src={previewImage || formData.photo || tempImage}
+                                src={previewImage || formData.photoUrl || tempImage}
                                 alt="Profile"
                                 className="profile-img"
                             />
@@ -67,8 +146,8 @@ const Profile = () => {
                                 <label className="input-label">Full Name</label>
                                 <input
                                     type="text"
-                                    name="fullName"
-                                    value={formData.fullName}
+                                    name="name"
+                                    value={formData.name}
                                     onChange={handleInputChange}
                                     className="profile-input"
                                 />
@@ -108,6 +187,28 @@ const Profile = () => {
                         <div className="button-group">
                             <button className="cancel-button" onClick={handleCancel}>Cancel</button>
                             <button className="save-button" onClick={handleSave}>Save Changes</button>
+                        </div>
+
+                        {/* Password Change Section */}
+                        <div className="password-section">
+                            <h3>Change Password</h3>
+                            <label className="input-label">Current Password</label>
+                            <input
+                                type="password"
+                                name="currentPassword"
+                                value={passwordData.currentPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                className="profile-input"
+                            />
+                            <label className="input-label">New Password</label>
+                            <input
+                                type="password"
+                                name="newPassword"
+                                value={passwordData.newPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                className="profile-input"
+                            />
+                            <button className="save-button" onClick={handlePasswordChange}>Change Password</button>
                         </div>
                     </div>
                 </div>

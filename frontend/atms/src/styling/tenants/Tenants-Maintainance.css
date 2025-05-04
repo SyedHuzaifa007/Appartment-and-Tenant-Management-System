@@ -1,0 +1,157 @@
+.dashboard {
+    font-family: sans-serif;
+    background-color: #f9fafb;
+    padding: 2rem;
+  }
+  
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+  
+  .tabs input {
+    display: none;
+  }
+  
+  .tabs-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tabs-header label {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #e5e7eb;
+    border-radius: 0.375rem;
+    transition: background 0.2s;
+  }
+  
+  .tabs input:checked + .tabs-header label {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  .tabs-body .tab-content {
+    display: none;
+  }
+  
+  #active:checked ~ .tabs-body .tab-content:nth-child(1),
+  #new:checked ~ .tabs-body .tab-content:nth-child(2),
+  #history:checked ~ .tabs-body .tab-content:nth-child(3) {
+    display: block;
+  }
+  
+  .card {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .card-body {
+    margin-top: 1rem;
+    color: #374151;
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-weight: 500;
+  }
+  
+  .in-progress {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+  }
+  
+  .scheduled {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  .completed {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  .form {
+    background: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form input, .form select, .form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    margin-top: 0.25rem;
+  }
+  
+  .form button {
+    background-color: #2563eb;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .form button:hover {
+    background-color: #1e40af;
+  }
+  
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  thead {
+    background-color: #f3f4f6;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  tbody td {
+    font-size: 0.875rem;
+  }
+  

@@ -82,4 +82,20 @@ router.get("/profile", authMiddleware, async (req, res) => {
   res.json(user);
 });
 
+router.put("/profile", authMiddleware, async (req, res) => {
+  try {
+    const { name, email, phone, address, photoUrl } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, email, phone, address, photoUrl },
+      { new: true, runValidators: true }
+    ).select("-password");
+    res.json({ message: "Profile updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Profile update error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 module.exports = router;

@@ -168,6 +168,7 @@ function StaffPage() {
                   &times;
                 </button>
 
+
                 <span className="text-sm text-gray-600 mb-2 sm:mb-0">
                   {request.description}
                 </span>

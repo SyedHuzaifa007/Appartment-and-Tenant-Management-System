@@ -6,6 +6,8 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth"); 
 const workerRoutes = require("./routes/worker");
 const requestRoutes = require("./routes/maintenance_requests");
+const profileRoutes = require("./routes/UserProfileauth");
+//app.use("/api", profileRoutes); 
 
 const app = express();
 
