@@ -29,7 +29,7 @@ const NavLandlord = ({ collapsed }) => {
 
       <NavLink to="/landlord/staff">
         <img src={staffIcon} className="icon" />
-        {!collapsed && <span>Staff</span>}
+        {!collapsed && <span>Maintenance</span>}
       </NavLink>
 
       <NavLink to="/landlord/finances">
