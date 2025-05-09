@@ -8,7 +8,7 @@ const profileSchema = new mongoose.Schema({
     password: { type: String, required: true }
 });
 
-userSchema.methods.comparePassword = function (candidatePassword) {
+profileSchema.methods.comparePassword = function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
 

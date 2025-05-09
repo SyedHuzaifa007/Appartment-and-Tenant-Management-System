@@ -5,22 +5,27 @@ import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axiosInstance from "../../axiosInstance";
 
 function PropertiesPage() {
     const [propertiesdata, setProperties] = useState([]);
+    const [landlordId, setLandlordId] = useState(null);
 
     useEffect(() => {
-        const fetchProperties = async () => {
-            try {
-                const response = await axios.get(`/api/properties/${landlordId}`);
-                setProperties(response.data);
-            } catch (error) {
-                console.error("Error fetching properties:", error.message);
-            }
-        };
-        fetchProperties();
+        if (landlordId) {
+            const fetchProperties = async () => {
+                try {
+                    const response = await axiosInstance.get(`/api/properties/${landlordId}`);
+                    setProperties(response.data);
+                } catch (error) {
+                    console.error("Error fetching properties:", error.message);
+                }
+            };
+            fetchProperties();
+        }
     }, [landlordId]);
+
 
     const navigate = useNavigate();
 
@@ -28,11 +33,12 @@ function PropertiesPage() {
         navigate(`/landlord/properties/${id}`, { state: { title: tit, address: addr, units: u, tenants: t } })
     }
 
+
     const handleDeletion = async (propertyId, propertyName) => {
         const confirmDelete = window.confirm(`Do you wish to delete Property: ${propertyName}?`);
         if (confirmDelete) {
             try {
-                await axios.delete(`/api/properties/${propertyId}`);
+                await axiosInstance.delete(`/api/properties/${propertyId}`);
                 setProperties((prevProperties) =>
                     prevProperties.filter((property) => property._id !== propertyId)
                 );
@@ -71,6 +77,7 @@ function PropertiesPage() {
         setErrors({});
         setFormVisible(true);
     };
+
 
     const closePropertyForm = () => {
         setFormVisible(false);
@@ -122,7 +129,7 @@ function PropertiesPage() {
 
         try {
             if (formData.id !== null && typeof formData.id === 'number') {
-                const response = await axios.put(`/api/properties/${propertiesdata[formData.id]._id}`, formToSubmit, {
+                const response = await axiosInstance.put(`/api/properties/${propertiesdata[formData.id]._id}`, formToSubmit, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -135,7 +142,7 @@ function PropertiesPage() {
                 );
                 console.log("Property updated successfully");
             } else {
-                const response = await axios.post("/api/properties", formToSubmit, {
+                const response = await axiosInstance.post("/api/properties", formToSubmit, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
