@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import NavLandlord from '../Lanlord_Pages/Lanlord_NavBar';
+import NavTenant from '../Tenant_Pages/Tenant_NavBar';
 import '../../styling/LandlordStyling/LandlordLayout.css';
 import menuIcon from '../../assets/MenuIcon_Black.png';
 import TenantHomePage from './HomePage';
@@ -19,7 +19,7 @@ const TenantLayout = () => {
 
   return (
     <div className="layout-container">
-      <NavLandlord collapsed={isCollapsed} />
+      <NavTenant collapsed={isCollapsed} />
       <div className={`content-wrapper ${isCollapsed ? 'expanded' : ''}`}>
       <header className="topbar relative flex items-center justify-between px-6 py-4 bg-white shadow-md">
       <img

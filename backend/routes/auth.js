@@ -84,10 +84,10 @@ router.get("/profile", authMiddleware, async (req, res) => {
 
 router.put("/profile", authMiddleware, async (req, res) => {
   try {
-    const { name, email, phone, address, photoUrl } = req.body;
+    const { name, email, photoUrl } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { name, email, phone, address, photoUrl },
+      { name, email, photoUrl },
       { new: true, runValidators: true }
     ).select("-password");
     res.json({ message: "Profile updated successfully", user: updatedUser });
