@@ -50,10 +50,12 @@ function PropertiesPage() {
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         id: null,
-        image: "",
         title: "",
         address: "",
         units: "",
+        image: "",
+        ownedBy: "",
+        assignedTo: [],
     });
 
     const openPropertyForm = (propertyId = null) => {
@@ -105,6 +107,7 @@ function PropertiesPage() {
 
     const saveProperty = async () => {
         let newErrors = {};
+
         Object.keys(formData).forEach((key) => {
             if (key !== "id" && formData[key] === "") {
                 newErrors[key] = true;
@@ -112,7 +115,9 @@ function PropertiesPage() {
         });
 
         setErrors(newErrors);
+
         if (Object.keys(newErrors).length > 0) {
+            console.log("Validation errors:", newErrors);
             return;
         }
 
@@ -120,23 +125,23 @@ function PropertiesPage() {
         formToSubmit.append("title", formData.title);
         formToSubmit.append("address", formData.address);
         formToSubmit.append("units", formData.units);
+        formToSubmit.append("ownedBy", userID);
 
         if (formData.image && formData.image instanceof File) {
             formToSubmit.append("image", formData.image);
+        } else {
+            console.warn("Invalid image file, not appended:", formData.image);
         }
 
         try {
-            const endpoint = formData.id !== null ? `/api/property/${formData.id}` : "/api/property";
+            const endpoint = formData.id !== null ? `/api/property/${formData.id}` : "/api/property/";
             const method = formData.id !== null ? "put" : "post";
-
             const response = await axiosInstance[method](endpoint, formToSubmit, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    "Content-Type": "multipart/form-data",
                 },
             });
-
             const updatedProperty = response.data;
-
             setProperties((prevProperties) => {
                 if (method === "put") {
                     return prevProperties.map((property) =>
@@ -145,7 +150,6 @@ function PropertiesPage() {
                 }
                 return [...prevProperties, updatedProperty];
             });
-
             setFormVisible(false);
             setFormData({
                 id: null,
@@ -157,18 +161,10 @@ function PropertiesPage() {
             setErrors({});
         } catch (error) {
             console.error("Error saving property:", error.message);
-        }finally {
-        setFormVisible(false);
-        setFormData({
-            id: null,
-            image: "",
-            title: "",
-            address: "",
-            units: "",
-        });
-        setErrors({});
-    }
+            console.error("Error details:", error.response?.data);
+        }
     };
+
 
     return (
         <>
@@ -184,7 +180,8 @@ function PropertiesPage() {
                 {propertiesdata.map((obj, index) => {
                     return (<div className="singleCard" key={index}>
                         <img
-                            src={obj.image instanceof File ? URL.createObjectURL(obj.image) : obj.image || tempImage}
+                            src={`http://localhost:5000/api/property/image/${obj.image}`}
+                            onError={(e) => { e.target.onerror = null; e.target.src = tempImage; }}
                             className="propertyImg"
                         />
                         <div className="content">
