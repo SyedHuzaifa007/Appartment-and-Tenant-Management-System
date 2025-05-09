@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.get("/properties/:landlordId", async (req, res) => {
+router.get("/:landlordId", async (req, res) => {
     try {
         const { landlordId } = req.params;
         const properties = await Property.find({ ownedBy: landlordId });
@@ -26,7 +26,7 @@ router.get("/properties/:landlordId", async (req, res) => {
     }
 });
 
-router.post("/properties", upload.single("image"), async (req, res) => {
+router.post("/", upload.single("image"), async (req, res) => {
     try {
         const { title, address, units, ownedBy } = req.body;
         const image = req.file ? req.file.path : "";
@@ -47,7 +47,7 @@ router.post("/properties", upload.single("image"), async (req, res) => {
 });
 
 
-router.put("/properties/:propertyId", upload.single("image"), async (req, res) => {
+router.put("/:propertyId", upload.single("image"), async (req, res) => {
     try {
         const { propertyId } = req.params;
         const { title, address, units, ownedBy } = req.body;
@@ -67,7 +67,7 @@ router.put("/properties/:propertyId", upload.single("image"), async (req, res) =
 });
 
 
-router.delete("/properties/:propertyId", async (req, res) => {
+router.delete("/:propertyId", async (req, res) => {
     try {
         const { propertyId } = req.params;
         const deletedProperty = await Property.findByIdAndDelete(propertyId);

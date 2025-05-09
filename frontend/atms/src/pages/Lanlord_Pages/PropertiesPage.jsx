@@ -8,37 +8,19 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from "react"
 
 function PropertiesPage() {
-    const [propertiesdata, setProperties] = useState([{
-        id: '123',
-        image: "",
-        title: 'Sunset Apartment',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    },
-    {
-        id: '456',
-        image: "",
-        title: 'Silicon Apartment',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    },
-    {
-        id: '789',
-        image: "",
-        title: 'Villa',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    }, {
-        id: '109',
-        image: "",
-        title: 'Valencia Apartment',
-        address: '123, Sunset Blvs, Los Angeles, CA 90210',
-        units: '12',
-        tenants: '10'
-    }]);
+    const [propertiesdata, setProperties] = useState([]);
+
+    useEffect(() => {
+        const fetchProperties = async () => {
+            try {
+                const response = await axios.get(`/api/properties/${landlordId}`);
+                setProperties(response.data);
+            } catch (error) {
+                console.error("Error fetching properties:", error.message);
+            }
+        };
+        fetchProperties();
+    }, [landlordId]);
 
     const navigate = useNavigate();
 
@@ -46,12 +28,20 @@ function PropertiesPage() {
         navigate(`/landlord/properties/${id}`, { state: { title: tit, address: addr, units: u, tenants: t } })
     }
 
-    const handleDeletion = (index, name) => {
-        const confirmDelete = window.confirm(`Do you wish to delete Property: ${name}?`);
+    const handleDeletion = async (propertyId, propertyName) => {
+        const confirmDelete = window.confirm(`Do you wish to delete Property: ${propertyName}?`);
         if (confirmDelete) {
-            setProperties((prevProperty) => prevProperty.filter((_, i) => i !== index));
+            try {
+                await axios.delete(`/api/properties/${propertyId}`);
+                setProperties((prevProperties) =>
+                    prevProperties.filter((property) => property._id !== propertyId)
+                );
+            } catch (error) {
+                console.error("Error deleting property:", error.message);
+            }
         }
-    }
+    };
+
 
     const [formVisible, setFormVisible] = useState(false);
     const [errors, setErrors] = useState({});
@@ -62,11 +52,12 @@ function PropertiesPage() {
         address: "",
         units: "",
     });
-    const openPropertyForm = (index = null) => {
-        if (index !== null) {
-            const property = propertiesdata[index];
+
+    const openPropertyForm = (propertyId = null) => {
+        if (propertyId) {
+            const property = propertiesdata.find(p => p._id === propertyId);
             if (property) {
-                setFormData({ ...property, id: index });
+                setFormData({ ...property, id: property._id });
             }
         } else {
             setFormData({
@@ -80,12 +71,13 @@ function PropertiesPage() {
         setErrors({});
         setFormVisible(true);
     };
+
     const closePropertyForm = () => {
         setFormVisible(false);
     };
     const handleInputChange = (e) => {
         const { name, type, value, files } = e.target;
-    
+
         if (type === "file") {
             const file = files[0];
             if (file) {
@@ -98,15 +90,15 @@ function PropertiesPage() {
             }
         } else {
             setFormData({ ...formData, [name]: value });
-    
+
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 [name]: value.trim() === "",
             }));
         }
     };
-    
-    const saveProperty = () => {
+
+    const saveProperty = async () => {
         let newErrors = {};
         Object.keys(formData).forEach((key) => {
             if (key !== "id" && formData[key].trim() === "") {
@@ -119,29 +111,52 @@ function PropertiesPage() {
             return;
         }
 
-        setProperties((prevProperty) => {
-            if (formData.id !== null && typeof formData.id === 'number') {
-                return prevProperty.map((property, index) =>
-                    index === formData.id
-                        ? { ...formData, tenants: property.tenants, id: property.id }
-                        : property
-                );
-            } else {
-                const newId = Date.now().toString();
-                return [...prevProperty, { ...formData, id: newId, tenants: '0' }];
-            }
-        });        
-        
+        const formToSubmit = new FormData();
+        formToSubmit.append("title", formData.title);
+        formToSubmit.append("address", formData.address);
+        formToSubmit.append("units", formData.units);
 
-        setFormVisible(false);
-        setFormData({
-            id: null,
-            image: "",
-            title: "",
-            address: "",
-            units: "",
-        });
-        setErrors({});
+        if (formData.image && typeof formData.image === "object") {
+            formToSubmit.append("image", formData.image);
+        }
+
+        try {
+            if (formData.id !== null && typeof formData.id === 'number') {
+                const response = await axios.put(`/api/properties/${propertiesdata[formData.id]._id}`, formToSubmit, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                });
+
+                setProperties((prevProperties) =>
+                    prevProperties.map((property, index) =>
+                        index === formData.id ? response.data : property
+                    )
+                );
+                console.log("Property updated successfully");
+            } else {
+                const response = await axios.post("/api/properties", formToSubmit, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                });
+
+                setProperties((prevProperties) => [...prevProperties, response.data]);
+                console.log("Property created successfully");
+            }
+
+            setFormVisible(false);
+            setFormData({
+                id: null,
+                image: "",
+                title: "",
+                address: "",
+                units: "",
+            });
+            setErrors({});
+        } catch (error) {
+            console.error("Error saving property:", error.message);
+        }
     };
 
     return (
@@ -198,7 +213,7 @@ function PropertiesPage() {
                             <input placeholder="0" type="number" name="units" value={formData.units} onChange={handleInputChange} className={errors.units ? "error" : ""} />
 
                             <label>Property Image</label>
-                            <input type="file"  name="image" onChange={handleInputChange} className={errors.image ? "error" : ""} accept="image/*"/>
+                            <input type="file" name="image" onChange={handleInputChange} className={errors.image ? "error" : ""} accept="image/*" />
 
                             <div className="button-container">
                                 <button type="button" className='save-btn' onClick={saveProperty}>Save</button>
