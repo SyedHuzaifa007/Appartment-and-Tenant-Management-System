@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth");
 const workerRoutes = require("./routes/worker");
 const requestRoutes = require("./routes/maintenance_requests");
 const profileRoutes = require("./routes/UserProfileauth");
+const propertyRoutes = require("./routes/property");
 //app.use("/api", profileRoutes); 
 
 const app = express();
@@ -28,6 +29,7 @@ app.get("/", (req, res) => res.send("Backend running!"));
 app.use("/api/auth", authRoutes);
 app.use("/api/workers", workerRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/property", propertyRoutes);
 app.use("/api/profile", require("./routes/profile"));
 
 const PORT = process.env.PORT || 5000;
