@@ -5,9 +5,8 @@ import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import axiosInstance from "../../axiosInstance";
-import { useSelector } from "react-redux";
 
 function PropertiesPage() {
     const [propertiesdata, setProperties] = useState([]);
@@ -85,15 +84,10 @@ function PropertiesPage() {
         if (type === "file") {
             const file = files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64String = reader.result;
-                    setFormData({
-                        ...formData,
-                        [name]: base64String,
-                    });
-                };
-                reader.readAsDataURL(file);
+                setFormData({
+                    ...formData,
+                    [name]: file,
+                });
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     [name]: false,
@@ -101,13 +95,13 @@ function PropertiesPage() {
             }
         } else {
             setFormData({ ...formData, [name]: value });
-
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 [name]: value.trim() === "",
             }));
         }
     };
+
 
     const saveProperty = async () => {
         let newErrors = {};
@@ -126,30 +120,31 @@ function PropertiesPage() {
         formToSubmit.append("title", formData.title);
         formToSubmit.append("address", formData.address);
         formToSubmit.append("units", formData.units);
-        formToSubmit.append("image", formData.image || "");
+
+        if (formData.image && formData.image instanceof File) {
+            formToSubmit.append("image", formData.image);
+        }
 
         try {
-            if (formData.id !== null) {
-                const response = await axiosInstance.put(`/api/property/${formData.id}`, formToSubmit, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    }
-                });
+            const endpoint = formData.id !== null ? `/api/property/${formData.id}` : "/api/property";
+            const method = formData.id !== null ? "put" : "post";
 
-                setProperties((prevProperties) =>
-                    prevProperties.map((property) =>
-                        property._id === formData.id ? response.data : property
-                    )
-                );
-            } else {
-                const response = await axiosInstance.post("/api/property", formToSubmit, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    }
-                });
+            const response = await axiosInstance[method](endpoint, formToSubmit, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-                setProperties((prevProperties) => [...prevProperties, response.data]);
-            }
+            const updatedProperty = response.data;
+
+            setProperties((prevProperties) => {
+                if (method === "put") {
+                    return prevProperties.map((property) =>
+                        property._id === formData.id ? updatedProperty : property
+                    );
+                }
+                return [...prevProperties, updatedProperty];
+            });
 
             setFormVisible(false);
             setFormData({
@@ -162,10 +157,18 @@ function PropertiesPage() {
             setErrors({});
         } catch (error) {
             console.error("Error saving property:", error.message);
-        }
+        }finally {
+        setFormVisible(false);
+        setFormData({
+            id: null,
+            image: "",
+            title: "",
+            address: "",
+            units: "",
+        });
+        setErrors({});
+    }
     };
-
-
 
     return (
         <>
@@ -180,7 +183,10 @@ function PropertiesPage() {
             <div className="cards">
                 {propertiesdata.map((obj, index) => {
                     return (<div className="singleCard" key={index}>
-                        <img src={obj.image || tempImage} alt="Property Image" className="propertyImg" />
+                        <img
+                            src={obj.image instanceof File ? URL.createObjectURL(obj.image) : obj.image || tempImage}
+                            className="propertyImg"
+                        />
                         <div className="content">
                             <div className="cardMainText">
                                 <h2>{obj.title}</h2>
@@ -212,10 +218,10 @@ function PropertiesPage() {
                         <h3>{formData.id !== null ? "Edit Property" : "Add New Property"}</h3>
                         <form>
                             <label>Property Name</label>
-                            <input placeholder="Enter propert name" type="text" name="title" value={formData.title} onChange={handleInputChange} className={errors.title ? "error" : ""} />
+                            <input placeholder="Enter property name" type="text" name="title" value={formData.title} onChange={handleInputChange} className={errors.title ? "error" : ""} />
 
                             <label>Address</label>
-                            <input placeholder="Enter propert address" type="text" name="address" value={formData.address} onChange={handleInputChange} className={errors.address ? "error" : ""} />
+                            <input placeholder="Enter property address" type="text" name="address" value={formData.address} onChange={handleInputChange} className={errors.address ? "error" : ""} />
 
                             <label>Number of Units</label>
                             <input placeholder="0" type="number" name="units" value={formData.units} onChange={handleInputChange} className={errors.units ? "error" : ""} />
