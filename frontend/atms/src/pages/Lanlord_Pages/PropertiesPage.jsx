@@ -5,18 +5,20 @@ import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import axiosInstance from "../../axiosInstance";
+import { useSelector } from "react-redux";
 
 function PropertiesPage() {
     const [propertiesdata, setProperties] = useState([]);
-    const [landlordId, setLandlordId] = useState(null);
+    const navigate = useNavigate();
+    const userID = sessionStorage.getItem("userID");
 
     useEffect(() => {
-        if (landlordId) {
+        if (userID) {
             const fetchProperties = async () => {
                 try {
-                    const response = await axiosInstance.get(`/api/properties/${landlordId}`);
+                    const response = await axiosInstance.get(`/api/property/${userID}`);
                     setProperties(response.data);
                 } catch (error) {
                     console.error("Error fetching properties:", error.message);
@@ -24,21 +26,17 @@ function PropertiesPage() {
             };
             fetchProperties();
         }
-    }, [landlordId]);
-
-
-    const navigate = useNavigate();
+    }, [userID]);
 
     const handleNavigation = (id, tit, addr, u, t) => {
-        navigate(`/landlord/properties/${id}`, { state: { title: tit, address: addr, units: u, tenants: t } })
+        navigate(`/landlord/property/${id}`, { state: { title: tit, address: addr, units: u, tenants: t } })
     }
-
 
     const handleDeletion = async (propertyId, propertyName) => {
         const confirmDelete = window.confirm(`Do you wish to delete Property: ${propertyName}?`);
         if (confirmDelete) {
             try {
-                await axiosInstance.delete(`/api/properties/${propertyId}`);
+                await axiosInstance.delete(`/api/property/${propertyId}`);
                 setProperties((prevProperties) =>
                     prevProperties.filter((property) => property._id !== propertyId)
                 );
@@ -78,7 +76,6 @@ function PropertiesPage() {
         setFormVisible(true);
     };
 
-
     const closePropertyForm = () => {
         setFormVisible(false);
     };
@@ -88,8 +85,15 @@ function PropertiesPage() {
         if (type === "file") {
             const file = files[0];
             if (file) {
-                const imageURL = URL.createObjectURL(file);
-                setFormData({ ...formData, [name]: imageURL });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64String = reader.result;
+                    setFormData({
+                        ...formData,
+                        [name]: base64String,
+                    });
+                };
+                reader.readAsDataURL(file);
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     [name]: false,
@@ -108,7 +112,7 @@ function PropertiesPage() {
     const saveProperty = async () => {
         let newErrors = {};
         Object.keys(formData).forEach((key) => {
-            if (key !== "id" && formData[key].trim() === "") {
+            if (key !== "id" && formData[key] === "") {
                 newErrors[key] = true;
             }
         });
@@ -122,34 +126,29 @@ function PropertiesPage() {
         formToSubmit.append("title", formData.title);
         formToSubmit.append("address", formData.address);
         formToSubmit.append("units", formData.units);
-
-        if (formData.image && typeof formData.image === "object") {
-            formToSubmit.append("image", formData.image);
-        }
+        formToSubmit.append("image", formData.image || "");
 
         try {
-            if (formData.id !== null && typeof formData.id === 'number') {
-                const response = await axiosInstance.put(`/api/properties/${propertiesdata[formData.id]._id}`, formToSubmit, {
+            if (formData.id !== null) {
+                const response = await axiosInstance.put(`/api/property/${formData.id}`, formToSubmit, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
                 });
 
                 setProperties((prevProperties) =>
-                    prevProperties.map((property, index) =>
-                        index === formData.id ? response.data : property
+                    prevProperties.map((property) =>
+                        property._id === formData.id ? response.data : property
                     )
                 );
-                console.log("Property updated successfully");
             } else {
-                const response = await axiosInstance.post("/api/properties", formToSubmit, {
+                const response = await axiosInstance.post("/api/property", formToSubmit, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
                 });
 
                 setProperties((prevProperties) => [...prevProperties, response.data]);
-                console.log("Property created successfully");
             }
 
             setFormVisible(false);
@@ -165,6 +164,8 @@ function PropertiesPage() {
             console.error("Error saving property:", error.message);
         }
     };
+
+
 
     return (
         <>
@@ -195,10 +196,10 @@ function PropertiesPage() {
                                     <p>{obj.tenants} Tenants</p>
                                 </div>
                             </div>
-                            <button className="viewBtn" onClick={() => handleNavigation(obj.id, obj.title, obj.address, obj.units, obj.tenants)}>View Property</button>
+                            <button className="viewBtn" onClick={() => handleNavigation(obj._id, obj.title, obj.address, obj.units, obj.tenants)}>View Property</button>
                             <div className="delete_edit">
-                                <button onClick={() => openPropertyForm(index)} className="editBtn"><img src={editIcon} className="editIcon" /><p className="editText">Edit</p></button>
-                                <button onClick={() => handleDeletion(index, obj.title)} className="deleteBtn"><img src={deleteIcon} className="deleteIcon" /><p className="deleteText">Delete</p></button>
+                                <button onClick={() => openPropertyForm(obj._id)} className="editBtn"><img src={editIcon} className="editIcon" /><p className="editText">Edit</p></button>
+                                <button onClick={() => handleDeletion(obj._id, obj.title)} className="deleteBtn"><img src={deleteIcon} className="deleteIcon" /><p className="deleteText">Delete</p></button>
                             </div>
                         </div>
                     </div>)

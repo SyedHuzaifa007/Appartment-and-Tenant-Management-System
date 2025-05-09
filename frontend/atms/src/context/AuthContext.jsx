@@ -13,8 +13,12 @@ export const AuthProvider = ({ children }) => {
       axios.get("http://localhost:5000/api/auth/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then(res => setUser(res.data))
-      .catch(() => setUser(null));
+      .then(res => {
+        setUser(res.data);
+      })
+      .catch(() => {
+        setUser(null);
+      });
     }
   }, [token]);
 
@@ -65,6 +69,8 @@ const register = async (name, email, password, role, navigate) => {
 
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("userID",res.data.user.id);
+
       setUser(res.data.user);
       if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {
         sessionStorage.setItem("showLoginToast", "true");
@@ -93,6 +99,7 @@ const register = async (name, email, password, role, navigate) => {
   const logout = (navigate) => {
     setToken(null);
     localStorage.removeItem("token");
+    sessionStorage.removeItem("userID");
     setUser(null);
     navigate("/login"); 
   };
