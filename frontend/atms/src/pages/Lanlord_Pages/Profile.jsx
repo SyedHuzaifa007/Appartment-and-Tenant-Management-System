@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../axiosInstance";
 import "../../styling/LandlordStyling/ProfilePage.css";
 import tempImage from "../../assets/tempImage.png";
 
@@ -7,8 +7,6 @@ const Profile = () => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        phone: "",
-        address: "",
         photoUrl: ""
     });
 
@@ -23,17 +21,15 @@ const Profile = () => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("/api/profile", {
+                const res = await axiosInstance.get("/api/profile", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                const { name, email, phone, address, photoUrl } = res.data;
+                const { name, email, photoUrl } = res.data;
 
                 const fullData = {
                     name: name || "",
                     email: email || "",
-                    phone: phone || "",
-                    address: address || "",
                     photoUrl: photoUrl || ""
                 };
 
@@ -64,13 +60,11 @@ const Profile = () => {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.put(
+            const response = await axiosInstance.put(
                 "/api/profile",
                 {
                     name: formData.name,
                     email: formData.email,
-                    phone: formData.phone,
-                    address: formData.address,
                     photoUrl: formData.photoUrl
                 },
                 {
@@ -100,7 +94,7 @@ const Profile = () => {
     const handlePasswordChange = async () => {
         try {
             const token = localStorage.getItem("token");
-            await axios.put(
+            await axiosInstance.put(
                 "/api/change-password",
                 passwordData,
                 {
