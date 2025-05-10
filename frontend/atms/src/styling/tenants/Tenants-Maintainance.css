@@ -20,7 +20,7 @@
     margin-bottom: 2rem;
   }
   
-  .tabs input {
+  /* .tabs input {
     display: none;
   }
   
@@ -46,7 +46,7 @@
   .tabs-body .tab-content {
     display: none;
   }
-  
+   */
   #active:checked ~ .tabs-body .tab-content:nth-child(1),
   #new:checked ~ .tabs-body .tab-content:nth-child(2),
   #history:checked ~ .tabs-body .tab-content:nth-child(3) {
@@ -154,4 +154,29 @@
   tbody td {
     font-size: 0.875rem;
   }
-  
+
+.tabs-body .tab-content {
+  margin-top: 20px;
+  display: block;
+}
+
+/* Basic tab button styles */
+.tabs-header {
+  display: flex;
+  gap: 10px;
+}
+
+.tabs-header button {
+  padding: 10px 20px;
+  background-color: #eee;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.tabs-header .active-tab {
+  background-color: #007bff;
+  color: white;
+}
+
