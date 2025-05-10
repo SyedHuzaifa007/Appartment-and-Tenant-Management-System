@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// GET /api/workers (fetch all workers)
 router.get("/", async (req, res) => {
   try {
     const workers = await Worker.find();
@@ -27,7 +26,16 @@ router.get("/", async (req, res) => {
   }
 });
 
-// DELETE /api/workers/:id (delete a worker)
+router.get("/_id", async (req, res) => {
+  try {
+    const workers = await Worker.find();
+    res.json(workers);
+  } catch (err) {
+    console.error("Error fetching workers:", err);
+    res.status(500).json({ error: "Failed to fetch workers" });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     await Worker.findByIdAndDelete(req.params.id);
@@ -38,17 +46,16 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// POST /api/workers (create a new worker with image)
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { name, workerType, salary } = req.body;
-    const image = req.file ? req.file.path : ""; // Store the file path in DB
+    const image = req.file ? req.file.path : ""; 
 
     const newWorker = new Worker({
       name,
       workerType,
       salary,
-      image, // Save image path to database
+      image,
     });
 
     const savedWorker = await newWorker.save();
@@ -56,6 +63,32 @@ router.post("/", upload.single("image"), async (req, res) => {
   } catch (err) {
     console.error("Error saving worker:", err);
     res.status(500).json({ error: "Failed to save worker" });
+  }
+});
+
+router.put("/:id", upload.single("image"), async (req, res) => {
+  try {
+    const workerId = req.params.id;
+    const { name, workerType, salary } = req.body;
+    const image = req.file ? req.file.path : undefined;
+
+    const updateFields = { name, workerType, salary };
+    if (image) updateFields.image = image;
+
+    const updatedWorker = await Worker.findByIdAndUpdate(
+      workerId,
+      { $set: updateFields },
+      { new: true }
+    );
+
+    if (!updatedWorker) {
+      return res.status(404).json({ error: "Worker not found" });
+    }
+
+    res.status(200).json(updatedWorker);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Update failed" });
   }
 });
 
