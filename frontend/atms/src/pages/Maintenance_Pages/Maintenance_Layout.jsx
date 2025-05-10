@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import NavLandlord from '../Maintenance_Pages/Maintenance_NavBar';
 import NavMaintenance from '../Maintenance_Pages/Maintenance_NavBar';
 import '../../styling/LandlordStyling/LandlordLayout.css';
 import menuIcon from '../../assets/MenuIcon_Black.png';

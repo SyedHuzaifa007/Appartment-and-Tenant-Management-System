@@ -75,7 +75,7 @@ const register = async (name, email, password, role, navigate) => {
         navigate("/tenant-dashboard");
       } else if (res.data.user.role === "maintenance" || res.data.user.role === "Maintenance") {
         sessionStorage.setItem("showLoginToast", "true");
-        navigate("/maintenance-dashboard");
+        navigate("/maintenance");
       } else {
         navigate("/");
       }
