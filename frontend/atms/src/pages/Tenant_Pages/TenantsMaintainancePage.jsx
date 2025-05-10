@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "../../styling/tenants/Tenants-Maintainance.css";
 
@@ -13,8 +13,25 @@ const TenantsMaintenancePage = () => {
   });
 
   const [activeTab, setActiveTab] = useState("active");
-  const [submissionMessage, setSubmissionMessage] = useState(null); // success or error message
+  const [submissionMessage, setSubmissionMessage] = useState(null);
+  const [requests, setRequests] = useState([]); // NEW: All fetched requests
 
+  // 🔁 Fetch all requests from API
+  const fetchRequests = async () => {
+    try {
+      const res = await axios.get("http://localhost:5173/api/requests");
+      setRequests(res.data); // Assumes backend returns an array of requests
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    }
+  };
+
+  // ⏳ Fetch on component mount
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  // ✅ Handle submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -36,11 +53,17 @@ const TenantsMaintenancePage = () => {
         accessInstructions: '',
         isEmergency: false,
       });
+
+      await fetchRequests(); // Refresh request list
     } catch (error) {
       console.error("Error submitting request:", error);
       setSubmissionMessage({ type: "error", text: "Failed to submit request. Please try again." });
     }
   };
+
+  // 🔍 Filtered requests
+  const activeRequests = requests.filter(req => req.status === "Pending" || req.status === "In Progress");
+  const completedRequests = requests.filter(req => req.status === "Completed");
 
   return (
     <div className="dashboard">
@@ -58,22 +81,25 @@ const TenantsMaintenancePage = () => {
           <div className="tabs-body">
             {activeTab === "active" && (
               <div className="tab-content">
-                {/* Active Requests */}
-                <div className="card">
-                  <div className="card-header">
-                    <div>
-                      <h3>Leaking Faucet Repair</h3>
-                      <p>Request #M2025-103</p>
+                {activeRequests.length === 0 ? (
+                  <p>No active requests found.</p>
+                ) : (
+                  activeRequests.map((req, index) => (
+                    <div className="card" key={index}>
+                      <div className="card-header">
+                        <div>
+                          <h3>{req.description.split(" - ")[0]}</h3>
+                          <p>Request #{req.id || `M2025-${index + 100}`}</p>
+                        </div>
+                        <span className={`badge ${req.status.toLowerCase().replace(" ", "-")}`}>{req.status}</span>
+                      </div>
+                      <div className="card-body">
+                        <p><strong>Description:</strong> {req.description.split(" - ")[1]}</p>
+                        <p><strong>Status Update:</strong> {req.feedback || "No updates yet."}</p>
+                      </div>
                     </div>
-                    <span className="badge in-progress">In Progress</span>
-                  </div>
-                  <div className="card-body">
-                    <p><strong>Description:</strong> The kitchen sink faucet is leaking when turned on.</p>
-                    <p><strong>Submitted:</strong> July 5, 2025</p>
-                    <p><strong>Scheduled Service:</strong> July 12, 2025</p>
-                    <p><strong>Status Update:</strong> Parts have been ordered.</p>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             )}
 
@@ -163,40 +189,30 @@ const TenantsMaintenancePage = () => {
 
             {activeTab === "history" && (
               <div className="tab-content">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Request #</th>
-                      <th>Issue</th>
-                      <th>Submitted</th>
-                      <th>Completed</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>M2025-089</td>
-                      <td>Bathroom Light Fixture</td>
-                      <td>June 15, 2025</td>
-                      <td>June 18, 2025</td>
-                      <td><span className="badge completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                      <td>M2025-075</td>
-                      <td>Garbage Disposal Not Working</td>
-                      <td>May 22, 2025</td>
-                      <td>May 24, 2025</td>
-                      <td><span className="badge completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                      <td>M2025-063</td>
-                      <td>Window Screen Repair</td>
-                      <td>April 10, 2025</td>
-                      <td>April 15, 2025</td>
-                      <td><span className="badge completed">Completed</span></td>
-                    </tr>
-                  </tbody>
-                </table>
+                {completedRequests.length === 0 ? (
+                  <p>No completed requests yet.</p>
+                ) : (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Request #</th>
+                        <th>Issue</th>
+                        <th>Status</th>
+                        <th>Feedback</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {completedRequests.map((req, index) => (
+                        <tr key={index}>
+                          <td>{req.id || `M2025-${index + 50}`}</td>
+                          <td>{req.description}</td>
+                          <td><span className="badge completed">Completed</span></td>
+                          <td>{req.feedback || "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             )}
           </div>
