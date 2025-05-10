@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../../styling/LandlordStyling/ProfilePage.css";
 import tempImage from "../../assets/tempImage.png";
 
 const Profile = () => {
@@ -57,7 +56,7 @@ const Profile = () => {
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setPreviewImage(imageURL);
-            setFormData((prev) => ({ ...prev, photoUrl: imageURL })); // Temporary, replace with real upload logic
+            setFormData((prev) => ({ ...prev, photoUrl: imageURL }));
         }
     };
 
@@ -116,104 +115,109 @@ const Profile = () => {
     };
 
     return (
-        <>
-            <h2 className="profile-title">My Profile</h2>
-            <div className="profile-container">
-                <div className="profile-content">
-                    {/* Profile Picture */}
-                    <div className="profile-picture-section">
-                        <div className="profile-picture">
-                            <img
-                                src={previewImage || formData.photoUrl || tempImage}
-                                alt="Profile"
-                                className="profile-img"
+        <div className="max-w-5xl mx-auto p-6">
+            <h2 className="text-3xl font-semibold text-center mb-8">My Profile</h2>
+            <div className="bg-white shadow-md rounded-2xl p-6 flex flex-col lg:flex-row gap-10">
+                {/* Profile Picture Section */}
+                <div className="flex flex-col items-center">
+                    <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-gray-200">
+                        <img
+                            src={previewImage || formData.photoUrl || tempImage}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        id="photo-upload"
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                    />
+                    <label
+                        htmlFor="photo-upload"
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700"
+                    >
+                        Upload Photo
+                    </label>
+                </div>
+
+                {/* Profile Info */}
+                <div className="flex-1 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-1">Full Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            id="photo-upload"
-                            style={{ display: "none" }}
-                            onChange={handlePhotoUpload}
-                        />
-                        <label htmlFor="photo-upload" className="upload-button">Upload Photo</label>
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-1">Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
                     </div>
 
-                    {/* Profile Info */}
-                    <div className="profile-info">
-                        <div className="profile-grid">
-                            <div>
-                                <label className="input-label">Full Name</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </div>
-                            <div>
-                                <label className="input-label">Email</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </div>
-                            <div>
-                                <label className="input-label">Phone</label>
-                                <input
-                                    type="text"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </div>
-                            <div>
-                                <label className="input-label">Address</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    className="profile-input"
-                                />
-                            </div>
-                        </div>
+                    {/* Save/Cancel Buttons */}
+                    <div className="flex justify-end gap-4 mt-6">
+                        <button
+                            onClick={handleCancel}
+                            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSave}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
 
-                        <div className="button-group">
-                            <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-                            <button className="save-button" onClick={handleSave}>Save Changes</button>
+                    {/* Password Change Section */}
+                    <div className="mt-10">
+                        <h3 className="text-xl font-semibold mb-4">Change Password</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Current Password</label>
+                                <input
+                                    type="password"
+                                    name="currentPassword"
+                                    value={passwordData.currentPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">New Password</label>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={passwordData.newPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
                         </div>
-
-                        {/* Password Change Section */}
-                        <div className="password-section">
-                            <h3>Change Password</h3>
-                            <label className="input-label">Current Password</label>
-                            <input
-                                type="password"
-                                name="currentPassword"
-                                value={passwordData.currentPassword}
-                                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                                className="profile-input"
-                            />
-                            <label className="input-label">New Password</label>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                value={passwordData.newPassword}
-                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                className="profile-input"
-                            />
-                            <button className="save-button" onClick={handlePasswordChange}>Change Password</button>
-                        </div>
+                        <button
+                            onClick={handlePasswordChange}
+                            className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        >
+                            Change Password
+                        </button>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
