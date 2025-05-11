@@ -10,6 +10,7 @@ const workerRoutes = require("./routes/worker");
 const requestRoutes = require("./routes/maintenance_requests");
 const profileRoutes = require("./routes/UserProfileauth");
 const propertyRoutes = require("./routes/property");
+const tenantRoutes = require("./routes/tenant");
 //app.use("/api", profileRoutes); 
 
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/workers", workerRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/property", propertyRoutes);
+app.use("/api/tenant", tenantRoutes);
 app.use("/api/profile", require("./routes/profile"));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

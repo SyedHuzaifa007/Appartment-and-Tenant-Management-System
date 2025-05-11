@@ -27,9 +27,17 @@ function PropertiesPage() {
         }
     }, [userID]);
 
-    const handleNavigation = (id, tit, addr, u, t) => {
-        navigate(`/landlord/property/${id}`, { state: { title: tit, address: addr, units: u, tenants: t } })
-    }
+    const handleNavigation = (propertyId, tit, addr, u) => {
+    navigate(`/landlord/properties/${propertyId}`, {
+        state: {
+            propertyId, 
+            title: tit, 
+            address: addr, 
+            units: u,  
+        }
+    });
+};
+
 
     const handleDeletion = async (propertyId, propertyName) => {
         const confirmDelete = window.confirm(`Do you wish to delete Property: ${propertyName}?`);
@@ -199,7 +207,7 @@ function PropertiesPage() {
                                     <p>{obj.tenants} Tenants</p>
                                 </div>
                             </div>
-                            <button className="viewBtn" onClick={() => handleNavigation(obj._id, obj.title, obj.address, obj.units, obj.tenants)}>View Property</button>
+                            <button className="viewBtn" onClick={() => handleNavigation(obj._id, obj.title, obj.address, obj.units)}>View Property</button>
                             <div className="delete_edit">
                                 <button onClick={() => openPropertyForm(obj._id)} className="editBtn"><img src={editIcon} className="editIcon" /><p className="editText">Edit</p></button>
                                 <button onClick={() => handleDeletion(obj._id, obj.title)} className="deleteBtn"><img src={deleteIcon} className="deleteIcon" /><p className="deleteText">Delete</p></button>
