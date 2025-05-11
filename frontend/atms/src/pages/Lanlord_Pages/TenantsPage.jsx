@@ -1,30 +1,47 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import '../../styling/LandlordStyling/TenantsPage.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
+import axiosInstance from "../../axiosInstance";
 
 const TenantsPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { title, address, units, tenants } = location.state || {};
+    const { propertyId, title, address, units } = location.state || {};
+    const landlordId = sessionStorage.getItem("userID");
+    const [tenantsInfo, setTenants] = useState([])
 
-    const [tenantsInfo, setTenants] = useState([
-        { id: '123', Name: 'Moin ud Din', CNIC: '3520275656991', Email: 'moin@gmail.com', Phone: '123456789', Unit: "Apt-1", Rent: '1200', DueDate: '2026-12-12' },
-        { id: '456', Name: 'Huzaifa Mustansar', CNIC: '2224277624891', Email: 'huzaifa@gmial.com', Phone: '123456789', Unit: "Apt-1", Rent: '20000', DueDate: '2026-12-12' },
-        { id: '789', Name: 'Abdur Rafay', CNIC: '2224277624891', Email: 'rafay@gmial.com', Phone: '123456789', Unit: "Apt-1", Rent: '5500', DueDate: '2026-12-12' },
-        { id: '109', Name: 'Faizan Saleh', CNIC: '2224277624891', Email: 'faizan@gmial.com', Phone: '123456789', Unit: "Apt-1", Rent: '9873', DueDate: '2023-12-12' }
-    ])
+    useEffect(() => {
+        if (propertyId) {
+            const fetchTenants = async () => {
+                try {
+                    const response = await axiosInstance.get(`/api/tenant/${propertyId}`);
+                    setTenants(response.data);
+                } catch (error) {
+                    console.error("Error fetching Tenants:", error.message);
+                }
+            };
+            fetchTenants();
+        }
+    }, [propertyId]);
 
     const HandleNavigation = () => {
         navigate(-1);
     }
 
-    const deleteTenant = (index, name) => {
-        const confirmDelete = window.confirm(`Do you wish to delete Tenant: ${name}?`);
+    const deleteTenant = async (tenantId, tenantName) => {
+        const confirmDelete = window.confirm(`Do you wish to delete Tenant: ${tenantName}?`);
         if (confirmDelete) {
-            setTenants((prevTenants) => prevTenants.filter((_, i) => i !== index));
+            try {
+                await axiosInstance.delete(`/api/tenant/${tenantId}`);
+                setTenants((prevTenants) =>
+                    prevTenants.filter((tenant) => tenant._id !== tenantId)
+                );
+            } catch (error) {
+                console.error("Error deleting Tenant:", error.message);
+            }
         }
     };
 
@@ -78,7 +95,7 @@ const TenantsPage = () => {
         }));
     };
 
-    const saveTenant = () => {
+    const saveTenant = async () => {
         let newErrors = {};
         Object.keys(formData).forEach((key) => {
             if (key !== "id" && formData[key].trim() === "") {
@@ -91,28 +108,54 @@ const TenantsPage = () => {
             return;
         }
 
-        setTenants((prevTenants) => {
-            if (formData.id !== null) {
-                return prevTenants.map((tenant, index) =>
-                    index === formData.id ? { ...formData, id: index } : tenant
-                );
-            } else {
-                return [...prevTenants, { ...formData, id: prevTenants.length }];
-            }
-        });
+        try {
+            const isEditing = formData.id !== null;
+            const endpoint = isEditing ? `api/tenant/${formData.id}` : 'api/tenant';
+            const method = isEditing ? 'put' : 'post';
 
-        setFormVisible(false);
-        setFormData({
-            id: null,
-            Name: "",
-            CNIC: "",
-            Email: "",
-            Phone: "",
-            Unit: "",
-            Rent: "",
-            DueDate: "",
-        });
-        setErrors({});
+            const payload = {
+                propertyId,
+                landlordId,
+                name: formData.Name,
+                cnic: formData.CNIC,
+                email: formData.Email,
+                phone: formData.Phone,
+                unit: formData.Unit,
+                rent: formData.Rent,
+                dueDate: formData.DueDate
+            };
+
+            console.log("Payload:", payload);
+
+            const response = await axiosInstance[method](endpoint, payload);
+            const updatedTenant = response.data;
+
+            setTenants((prevTenants) => {
+                if (isEditing) {
+                    return prevTenants.map((tenant) =>
+                        tenant._id === updatedTenant._id ? updatedTenant : tenant
+                    );
+                } else {
+                    return [...prevTenants, updatedTenant];
+                }
+            });
+
+            setFormVisible(false);
+            setFormData({
+                id: null,
+                Name: "",
+                CNIC: "",
+                Email: "",
+                Phone: "",
+                Unit: "",
+                Rent: "",
+                DueDate: "",
+            });
+            setErrors({});
+        } catch (error) {
+            console.error("Error saving tenant:", error);
+            alert("Error saving tenant");
+        }
     };
 
     return (
@@ -149,16 +192,16 @@ const TenantsPage = () => {
                     <tbody>
                         {tenantsInfo.map((tenant, index) => (
                             <tr key={index}>
-                                <td>{tenant.Name}</td>
-                                <td>{tenant.CNIC.slice(0, 5)}-{tenant.CNIC.slice(5, 12)}-{tenant.CNIC.slice(12)}</td>
-                                <td>{tenant.Email}</td>
-                                <td>{tenant.Phone}</td>
-                                <td>{tenant.Unit}</td>
-                                <td>Rs.{tenant.Rent}</td>
-                                <td className={new Date(tenant.DueDate) < new Date() ? "overdue" : ""}>{tenant.DueDate}</td>
+                                <td>{tenant.name}</td>
+                                <td>{tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}</td>
+                                <td>{tenant.email}</td>
+                                <td>{tenant.phone}</td>
+                                <td>{tenant.unit}</td>
+                                <td>Rs.{tenant.rent}</td>
+                                <td className={new Date(tenant.dueDate) < new Date() ? "overdue" : ""}>{tenant.dueDate}</td>
                                 <td>
                                     <button className='edit-btn' onClick={() => openTenantForm(index)}><img className="editIcon" src={editIcon} /></button>
-                                    <button className="delete-btn" onClick={() => deleteTenant(index, tenant.Name)}><img className="deleteIcon" src={deleteIcon} /></button>
+                                    <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}><img className="deleteIcon" src={deleteIcon} /></button>
                                 </td>
                             </tr>
                         ))}
@@ -168,7 +211,8 @@ const TenantsPage = () => {
             </div>
 
             {formVisible && (
-                <div className='modal-overlay'>
+                <>
+                    <div className='modal-overlay' onClick={closeTenantForm}></div>
                     <div className="modal">
                         <h3>{formData.id !== null ? "Edit Tenant" : "Add Tenant"}</h3>
                         <form>
@@ -199,7 +243,7 @@ const TenantsPage = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </>
             )}
         </div>
     );
