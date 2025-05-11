@@ -74,7 +74,7 @@ function App() {
           <Route path="/tenant" element={<TenantLayout />}>
             <Route path="home" element={<THomePage />} />
             <Route path="payments" element={<TPayments />} />
-            <Route path="maintainance" element={<TMaintainance />} />
+            <Route path="maintenance" element={<TMaintainance />} />
             <Route path="profile" element={<TProfile />} />
             <Route path="settings" element={<TSettings theme={theme} handleThemeToggle={handleThemeToggle} />} />
           </Route>

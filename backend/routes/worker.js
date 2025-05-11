@@ -48,7 +48,7 @@ router.delete("/:id", async (req, res) => {
 
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { name, workerType, salary } = req.body;
+    const { name, workerType, salary, createdBy } = req.body;
     const image = req.file ? req.file.path : ""; 
 
     const newWorker = new Worker({
@@ -56,6 +56,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       workerType,
       salary,
       image,
+      createdBy,
     });
 
     const savedWorker = await newWorker.save();

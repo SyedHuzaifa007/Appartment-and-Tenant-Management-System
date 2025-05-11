@@ -5,6 +5,11 @@ const workerSchema = new Schema({
   workerType: String,
   image: String,
   salary: Number,
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: "User", 
+    required: true,
+  },
 });
 
 module.exports = model("Worker", workerSchema);
