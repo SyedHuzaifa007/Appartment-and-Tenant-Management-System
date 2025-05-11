@@ -156,23 +156,21 @@ const StaffManagement = () => {
         Manage your maintenance staff and assign tasks
       </p>
 
-              <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6">
         <button
-          className={`px-4 py-2 rounded transition-colors duration-200 ${
-            activeTab === "staff"
+          className={`px-4 py-2 rounded transition-colors duration-200 ${activeTab === "staff"
               ? "bg-blue-600 text-white"
               : "bg-gray-100 text-black-700 hover:bg-blue-200"
-          }`}
+            }`}
           onClick={() => setActiveTab("staff")}
         >
           Staff Members
         </button>
         <button
-          className={`px-4 py-2 rounded transition-colors duration-200 ${
-            activeTab === "jobs"
+          className={`px-4 py-2 rounded transition-colors duration-200 ${activeTab === "jobs"
               ? "bg-blue-600 text-white"
               : "bg-gray-100 text-black-700 hover:bg-blue-200"
-          }`}
+            }`}
           onClick={() => setActiveTab("jobs")}
         >
           Maintenance Jobs
@@ -209,18 +207,18 @@ const StaffManagement = () => {
               </p>
               <div className="flex gap-2 mt-4">
                 <button
-  className="flex-1 border px-3 py-1 rounded text-sm hover:bg-gray-100"
-  onClick={() => openModal("edit", staff)}
->
-  ✏️ Edit
-</button>
+                  className="flex-1 border px-3 py-1 rounded text-sm hover:bg-gray-100"
+                  onClick={() => openModal("edit", staff)}
+                >
+                  ✏️ Edit
+                </button>
 
                 <button
-  className="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-  onClick={() => openModal("assign", staff)}
->
-  🛠 Assign Job
-</button>
+                  className="flex-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                  onClick={() => openModal("assign", staff)}
+                >
+                  🛠 Assign Job
+                </button>
 
               </div>
             </div>
@@ -248,30 +246,29 @@ const StaffManagement = () => {
                 <td className="px-4 py-2">{job.assignedTo}</td>
                 <td className="px-4 py-2">
                   <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      job.status === "In Progress"
+                    className={`px-2 py-1 text-xs rounded-full ${job.status === "In Progress"
                         ? "bg-yellow-100 text-yellow-800"
                         : job.status === "Scheduled"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-red-100 text-red-700"
-                    }`}
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-red-100 text-red-700"
+                      }`}
                   >
                     {job.status}
                   </span>
                 </td>
                 <td className="px-4 py-2 flex gap-2">
                   <button
-  onClick={() => handleStatusChange(job.id, "Completed")}
-  className="text-green-600 text-xs hover:underline hover:text-green-800"
->
-  ✅ Complete
-</button>
-<button
-  onClick={() => handleStatusChange(job.id, "Cancelled")}
-  className="text-red-600 text-xs hover:underline hover:text-red-800"
->
-  ❌ Cancel
-</button>
+                    onClick={() => handleStatusChange(job.id, "Completed")}
+                    className="text-green-600 text-xs hover:underline hover:text-green-800"
+                  >
+                    ✅ Complete
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange(job.id, "Cancelled")}
+                    className="text-red-600 text-xs hover:underline hover:text-red-800"
+                  >
+                    ❌ Cancel
+                  </button>
 
                 </td>
               </tr>
@@ -287,8 +284,8 @@ const StaffManagement = () => {
               {modalType === "add"
                 ? "Add Staff Member"
                 : modalType === "edit"
-                ? "Edit Contact Information"
-                : "Assign Job"}
+                  ? "Edit Contact Information"
+                  : "Assign Job"}
             </h2>
             {modalType !== "assign" ? (
               <>

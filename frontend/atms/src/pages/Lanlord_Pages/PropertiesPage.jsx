@@ -10,6 +10,19 @@ import axiosInstance from "../../axiosInstance";
 
 function PropertiesPage() {
     const [propertiesdata, setProperties] = useState([]);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [formVisible, setFormVisible] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [formData, setFormData] = useState({
+        id: null,
+        title: "",
+        address: "",
+        units: "",
+        image: null,
+        ownedBy: "",
+        assignedTo: [],
+    });
+
     const navigate = useNavigate();
     const userID = sessionStorage.getItem("userID");
 
@@ -28,15 +41,15 @@ function PropertiesPage() {
     }, [userID]);
 
     const handleNavigation = (propertyId, tit, addr, u) => {
-    navigate(`/landlord/properties/${propertyId}`, {
-        state: {
-            propertyId, 
-            title: tit, 
-            address: addr, 
-            units: u,  
-        }
-    });
-};
+        navigate(`/landlord/properties/${propertyId}`, {
+            state: {
+                propertyId,
+                title: tit,
+                address: addr,
+                units: u,
+            }
+        });
+    };
 
 
     const handleDeletion = async (propertyId, propertyName) => {
@@ -52,19 +65,6 @@ function PropertiesPage() {
             }
         }
     };
-
-
-    const [formVisible, setFormVisible] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [formData, setFormData] = useState({
-        id: null,
-        title: "",
-        address: "",
-        units: "",
-        image: "",
-        ownedBy: "",
-        assignedTo: [],
-    });
 
     const openPropertyForm = (propertyId = null) => {
         if (propertyId) {
@@ -88,30 +88,11 @@ function PropertiesPage() {
     const closePropertyForm = () => {
         setFormVisible(false);
     };
+
     const handleInputChange = (e) => {
-        const { name, type, value, files } = e.target;
-
-        if (type === "file") {
-            const file = files[0];
-            if (file) {
-                setFormData({
-                    ...formData,
-                    [name]: file,
-                });
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [name]: false,
-                }));
-            }
-        } else {
-            setFormData({ ...formData, [name]: value });
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [name]: value.trim() === "",
-            }));
-        }
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
-
 
     const saveProperty = async () => {
         let newErrors = {};
@@ -134,11 +115,8 @@ function PropertiesPage() {
         formToSubmit.append("address", formData.address);
         formToSubmit.append("units", formData.units);
         formToSubmit.append("ownedBy", userID);
-
-        if (formData.image && formData.image instanceof File) {
+        if (formData.image) {
             formToSubmit.append("image", formData.image);
-        } else {
-            console.warn("Invalid image file, not appended:", formData.image);
         }
 
         try {
@@ -161,11 +139,12 @@ function PropertiesPage() {
             setFormVisible(false);
             setFormData({
                 id: null,
-                image: "",
+                image: null,
                 title: "",
                 address: "",
                 units: "",
             });
+            setPreviewImage(null);
             setErrors({});
         } catch (error) {
             console.error("Error saving property:", error.message);
@@ -188,7 +167,7 @@ function PropertiesPage() {
                 {propertiesdata.map((obj, index) => {
                     return (<div className="singleCard" key={index}>
                         <img
-                            src={`http://localhost:5000/api/property/image/${obj.image}`}
+                            src={`http://localhost:5000/${obj.image}`}
                             onError={(e) => { e.target.onerror = null; e.target.src = tempImage; }}
                             className="propertyImg"
                         />
@@ -204,7 +183,7 @@ function PropertiesPage() {
                                 </div>
                                 <div className="tenantsBox">
                                     <img src={tenantsIcon} alt="" className="iconTenants" />
-                                    <p>{obj.tenants} Tenants</p>
+                                    <p>{obj.assignedTo.length} Tenants</p>
                                 </div>
                             </div>
                             <button className="viewBtn" onClick={() => handleNavigation(obj._id, obj.title, obj.address, obj.units)}>View Property</button>
@@ -232,7 +211,10 @@ function PropertiesPage() {
                             <input placeholder="0" type="number" name="units" value={formData.units} onChange={handleInputChange} className={errors.units ? "error" : ""} />
 
                             <label>Property Image</label>
-                            <input type="file" name="image" onChange={handleInputChange} className={errors.image ? "error" : ""} accept="image/*" />
+                            <input type="file" name="image" onChange={(e) => {
+                                const file = e.target.files[0];
+                                setFormData({ ...formData, image: file });
+                            }} className={errors.image ? "error" : ""} accept="image/*" />
 
                             <div className="button-container">
                                 <button type="button" className='save-btn' onClick={saveProperty}>Save</button>
