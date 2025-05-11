@@ -70,6 +70,7 @@ const register = async (name, email, password, role, navigate) => {
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
       sessionStorage.setItem("userID",res.data.user.id);
+      sessionStorage.setItem("tenantID",res.data.tenant.tid);
 
       setUser(res.data.user);
       if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {
@@ -78,7 +79,7 @@ const register = async (name, email, password, role, navigate) => {
         navigate("/landlord/home");
       } else if (res.data.user.role === "tenant" || res.data.user.role === "Tenant") {
         sessionStorage.setItem("showLoginToast", "true");
-        navigate("/tenant-dashboard");
+        navigate("/tenant");
       } else if (res.data.user.role === "maintenance" || res.data.user.role === "Maintenance") {
         sessionStorage.setItem("showLoginToast", "true");
         navigate("/maintenance");
