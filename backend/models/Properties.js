@@ -4,11 +4,7 @@ const propertySchema = new Schema({
   title: String,
   address: String,
   units: Number,
-  image: {
-    type: Schema.Types.ObjectId,
-    ref: "fs.files",
-    default: null,
-  },
+  image: String,
   ownedBy: {
     type: Schema.Types.ObjectId,
     ref: "Landlord",
