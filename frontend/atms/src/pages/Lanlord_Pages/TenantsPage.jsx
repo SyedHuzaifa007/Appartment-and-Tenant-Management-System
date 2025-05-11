@@ -59,11 +59,20 @@ const TenantsPage = () => {
 
     const [errors, setErrors] = useState({});
 
-    const openTenantForm = (index = null) => {
-        if (index !== null) {
-            const tenant = tenantsInfo[index];
+    const openTenantForm = (tid = null) => {
+        if (tid) {
+            const tenant = tenantsInfo.find(t => t._id === tid);
             if (tenant) {
-                setFormData({ ...tenant, id: index });
+                setFormData({
+                    id: tenant._id,
+                    Name: tenant.name,
+                    CNIC: tenant.cnic,
+                    Email: tenant.email,
+                    Phone: tenant.phone,
+                    Unit: tenant.unit,
+                    Rent: tenant.rent.toString(),
+                    DueDate: tenant.dueDate.split('T')[0]  // Format to YYYY-MM-DD for the date input
+                });
             }
         } else {
             setFormData({
@@ -80,6 +89,7 @@ const TenantsPage = () => {
         setErrors({});
         setFormVisible(true);
     };
+
 
     const closeTenantForm = () => {
         setFormVisible(false);
@@ -200,7 +210,7 @@ const TenantsPage = () => {
                                 <td>Rs.{tenant.rent}</td>
                                 <td className={new Date(tenant.dueDate) < new Date() ? "overdue" : ""}>{tenant.dueDate}</td>
                                 <td>
-                                    <button className='edit-btn' onClick={() => openTenantForm(index)}><img className="editIcon" src={editIcon} /></button>
+                                    <button className='edit-btn' onClick={() => openTenantForm(tenant._id)}><img className="editIcon" src={editIcon} /></button>
                                     <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}><img className="deleteIcon" src={deleteIcon} /></button>
                                 </td>
                             </tr>
