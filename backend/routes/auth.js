@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
+const Tenant=require("../models/Tenants");
 require("dotenv").config();
 
 const router = express.Router();
@@ -48,15 +49,22 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
+    
+    const tenant=await Tenant.findOne({name});
+
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role,tid:tenant._id,lId:tenant.landlordId },
       process.env.JWT_SECRET || "your_secret",
       { expiresIn: "1h" }
     );
 
+    
     res.json({
       token,
-      user: { id: user._id, name: user.name, role: user.role },
+      tenant:{tid : tenant._id,landlordId: tenant.landlordId},
+      user: { id: user._id, name: user.name, role: user.role }
+      
+
     });
   } catch (err) {
     console.error("Login error:", err);

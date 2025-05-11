@@ -16,6 +16,11 @@ const TenantsMaintenancePage = () => {
   const [submissionMessage, setSubmissionMessage] = useState(null);
   const [requests, setRequests] = useState([]); // NEW: All fetched requests
 
+  // const userID = sessionStorage.getItem("userID");
+  // console.log(userID);
+  const tenantID=sessionStorage.getItem("landlordID");
+  console.log(tenantID);
+
   // 🔁 Fetch all requests from API
   const fetchRequests = async () => {
     try {
@@ -40,7 +45,7 @@ const TenantsMaintenancePage = () => {
         description: `${formData.title} - ${formData.description}`,
         feedback: "",
         landlordId: "landlord001",
-        tenantId: "tenant007",
+        tenantId: userID,
         status: "Pending"
       });
 
