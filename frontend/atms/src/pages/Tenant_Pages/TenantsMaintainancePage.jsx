@@ -16,10 +16,15 @@ const TenantsMaintenancePage = () => {
   const [submissionMessage, setSubmissionMessage] = useState(null);
   const [requests, setRequests] = useState([]); // NEW: All fetched requests
 
+  // const userID = sessionStorage.getItem("userID");
+  // console.log(userID);
+  const tenantID=sessionStorage.getItem("landlordID");
+  console.log(tenantID);
+
   // 🔁 Fetch all requests from API
   const fetchRequests = async () => {
     try {
-      const res = await axios.get("http://localhost:5173/api/requests");
+      const res = await axios.get("http://localhost:5000/api/requests");
       setRequests(res.data); // Assumes backend returns an array of requests
     } catch (error) {
       console.error("Error fetching requests:", error);
@@ -36,11 +41,11 @@ const TenantsMaintenancePage = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5173/api/requests", {
+      await axios.post("http://localhost:5000/api/requests", {
         description: `${formData.title} - ${formData.description}`,
         feedback: "",
         landlordId: "landlord001",
-        tenantId: "tenant007",
+        tenantId: userID,
         status: "Pending"
       });
 

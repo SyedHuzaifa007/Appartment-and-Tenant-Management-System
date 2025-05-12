@@ -13,6 +13,16 @@ router.get('/:propertyId', async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const tenants = await Tenant.find();
+    res.json(tenants);
+  } catch (err) {
+    console.error("Error fetching tenants:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 router.post('/', async (req, res) => {
     try {
         const { propertyId, landlordId, name, cnic, email, phone, unit, rent, dueDate } = req.body;

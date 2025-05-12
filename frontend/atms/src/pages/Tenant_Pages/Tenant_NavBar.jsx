@@ -25,7 +25,7 @@ const NavTenant = ({ collapsed }) => {
         {!collapsed && <span>Payments</span>}
       </NavLink>
 
-      <NavLink to="/tenant/maintainance">
+      <NavLink to="/tenant/maintenance">
         <img src={staffIcon} className="icon" />
         {!collapsed && <span>Maintainance</span>}
       </NavLink>
