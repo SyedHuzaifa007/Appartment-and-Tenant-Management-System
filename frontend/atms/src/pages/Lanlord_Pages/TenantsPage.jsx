@@ -135,8 +135,6 @@ const TenantsPage = () => {
                 dueDate: formData.DueDate
             };
 
-            console.log("Payload:", payload);
-
             const response = await axiosInstance[method](endpoint, payload);
             const updatedTenant = response.data;
 
@@ -232,22 +230,22 @@ const TenantsPage = () => {
                         <h3>{formData.id !== null ? "Edit Tenant" : "Add Tenant"}</h3>
                         <form>
                             <label>Name</label>
-                            <input type="text" name="Name" value={formData.Name} onChange={handleInputChange} className={errors.Name ? "error" : ""} />
+                            <input type="text" name="Name" placeholder='Enter Tenant name' value={formData.Name} onChange={handleInputChange} className={errors.Name ? "error" : ""} />
 
                             <label>CNIC</label>
-                            <input type="number" name="CNIC" value={formData.CNIC} onChange={handleInputChange} className={errors.CNIC ? "error" : ""} />
+                            <input type="number" name="CNIC" placeholder='Enter Tenant cnic' value={formData.CNIC} onChange={handleInputChange} className={errors.CNIC ? "error" : ""} />
 
                             <label>Email</label>
-                            <input type="email" name="Email" value={formData.Email} onChange={handleInputChange} className={errors.Email ? "error" : ""} />
+                            <input type="email" name="Email" placeholder='Enter Tenant email' value={formData.Email} onChange={handleInputChange} className={errors.Email ? "error" : ""} />
 
                             <label>Phone</label>
-                            <input type="number" name="Phone" value={formData.Phone} onChange={handleInputChange} className={errors.Phone ? "error" : ""} />
+                            <input type="number" name="Phone" placeholder='Enter Tenant phoneNo' value={formData.Phone} onChange={handleInputChange} className={errors.Phone ? "error" : ""} />
 
                             <label>Unit</label>
-                            <input type="text" name="Unit" value={formData.Unit} onChange={handleInputChange} className={errors.Unit ? "error" : ""} />
+                            <input type="text" name="Unit" placeholder='Enter Tenant unit' value={formData.Unit} onChange={handleInputChange} className={errors.Unit ? "error" : ""} />
 
                             <label>Rent</label>
-                            <input type="number" name="Rent" value={formData.Rent} onChange={handleInputChange} className={errors.Rent ? "error" : ""} />
+                            <input type="number" name="Rent" placeholder='0' value={formData.Rent} onChange={handleInputChange} className={errors.Rent ? "error" : ""} />
 
                             <label>Due Date</label>
                             <input type="date" name="DueDate" value={formData.DueDate} onChange={handleInputChange} className={errors.DueDate ? "error" : ""} />

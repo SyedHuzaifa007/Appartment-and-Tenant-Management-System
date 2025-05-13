@@ -144,6 +144,18 @@
     width: 100%;
 }
 
+h3{
+    color: var(--maintext-color)
+}
+
+label{
+    color: var(--maintext-color)
+}
+
+input{
+    color: var(--maintext-color);
+}
+
 .error {
     border: 2px solid red !important;
 }

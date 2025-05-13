@@ -37,9 +37,9 @@ function SettingsPage({ theme, handleThemeToggle }) {
             <h2 className="profile-title text-center">Settings</h2>
 
             <div className='menuBar'>
-                <label onClick={changeToGeneral} className={generalMenu ? 'selected' : ''}>General</label>
-                <label onClick={changeToPayment} className={paymentMenu ? 'selected' : ''}> Payments</label>
-                <label onClick={changeToSecurity} className={securityMenu ? 'selected' : ''}> Privacy & Security</label>
+                <label onClick={changeToGeneral} className={generalMenu ? 'selected' : 'notselected'}>General</label>
+                <label onClick={changeToPayment} className={paymentMenu ? 'selected' : 'notselected'}> Payments</label>
+                <label onClick={changeToSecurity} className={securityMenu ? 'selected' : 'notselected'}> Privacy & Security</label>
             </div>
 
 
