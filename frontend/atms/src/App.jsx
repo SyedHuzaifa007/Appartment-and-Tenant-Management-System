@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import "./styling/global-style.css"
@@ -32,21 +32,25 @@ import Maintenance_Layout from "./pages/Maintenance_Pages/Maintenance_Layout";
 
 
 function App() {
-
   const [theme, setTheme] = useState('light');
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('app-theme');
-        if (savedTheme) {
-            setTheme(savedTheme);
-        }
-    }, []);
-    useEffect(() => {
-        document.body.className = theme;
-        localStorage.setItem('app-theme', theme);
-    }, [theme]);
-    const handleThemeToggle = () => {
-        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-    };
+  
+  useEffect(() => {
+    let savedTheme = localStorage.getItem('app-theme');
+    if (!savedTheme) {
+      savedTheme = 'light';
+      localStorage.setItem('app-theme', savedTheme);
+    }
+    setTheme(savedTheme);
+  }, []);
+
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('app-theme', theme);
+  }, [theme]);
+
+  const handleThemeToggle = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
 
   useEffect(() => {
     axios.get("http://localhost:5000/")
@@ -60,7 +64,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+
           <Route path="/landlord" element={<LandlordLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="properties" element={<PropertiesPage />} />
@@ -80,10 +84,10 @@ function App() {
           </Route>
 
           <Route path="/maintenance" element={<Maintenance_Layout />}>
-          <Route path="home" element={<Maintenance_HomePage />} />
-          <Route path="requests" element={<Maintenance_RequestsPage />} />
-          <Route path="profile" element={<Maintenance_ProfilePage />} />
-          <Route path="settings" element={<Maintenance_SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
+            <Route path="home" element={<Maintenance_HomePage />} />
+            <Route path="requests" element={<Maintenance_RequestsPage />} />
+            <Route path="profile" element={<Maintenance_ProfilePage />} />
+            <Route path="settings" element={<Maintenance_SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
           </Route>
         </Routes>
       </Router>

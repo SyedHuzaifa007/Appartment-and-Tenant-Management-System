@@ -103,7 +103,6 @@ const Signup = () => {
               </label>
             ))}
           </div>
-
           <button onClick={handleSubmit} type="submit" className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg mt-4 hover:bg-blue-700">
             Register →
           </button>
