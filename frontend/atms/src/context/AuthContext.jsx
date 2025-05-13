@@ -68,9 +68,10 @@ const register = async (name, email, password, role, navigate) => {
       const res = await axios.post("http://localhost:5000/api/auth/login", { name, password });
 
       setToken(res.data.token);
-      localStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("userID",res.data.user.id);
-      sessionStorage.setItem("tenantID",res.data.tenant.tid);
+      console.log("User ID: ", sessionStorage.getItem("userID"));
+      // sessionStorage.setItem("tenantID",res.data.tenant.tid);
 
       setUser(res.data.user);
       if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {

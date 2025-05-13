@@ -11,6 +11,7 @@ const requestRoutes = require("./routes/maintenance_requests");
 const profileRoutes = require("./routes/UserProfileauth");
 const propertyRoutes = require("./routes/property");
 const tenantRoutes = require("./routes/tenant");
+const paymentRoutes = require("./routes/payments");
 //app.use("/api", profileRoutes); 
 
 const app = express();
@@ -36,6 +37,8 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/property", propertyRoutes);
 app.use("/api/tenant", tenantRoutes);
 app.use("/api/profile", require("./routes/profile"));
+app.use("/api/payments", paymentRoutes);
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

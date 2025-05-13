@@ -14,10 +14,10 @@ const TenantsMaintenancePage = () => {
 
   const [activeTab, setActiveTab] = useState("active");
   const [submissionMessage, setSubmissionMessage] = useState(null);
-  const [requests, setRequests] = useState([]); // NEW: All fetched requests
+  const [requests, setRequests] = useState([]);
 
-  // const userID = sessionStorage.getItem("userID");
-  // console.log(userID);
+  const userID = sessionStorage.getItem("userID");
+  console.log(userID);
   const tenantID=sessionStorage.getItem("landlordID");
   console.log(tenantID);
 

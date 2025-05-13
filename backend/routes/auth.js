@@ -50,7 +50,13 @@ router.post("/login", async (req, res) => {
     }
 
     
-    const tenant=await Tenant.findOne({name});
+    const tenant = await Tenant.findOne({name});
+
+
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
 
     const token = jwt.sign(
       { id: user._id, role: user.role,tid:tenant._id,lId:tenant.landlordId },

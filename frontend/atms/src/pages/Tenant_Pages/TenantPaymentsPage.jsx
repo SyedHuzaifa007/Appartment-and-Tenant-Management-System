@@ -20,13 +20,43 @@ const TenantPaymentsPage = () => {
   const [last4, setLast4] = React.useState('');
   const [expiry, setExpiry] = React.useState('');
 
-  const handlePaymentSubmit = (e) => {
-    e.preventDefault();
-    setTimeout(() => {
+  const handlePaymentSubmit = async (e) => {
+  e.preventDefault();
+
+  const userID = sessionStorage.getItem("userID");
+  console.log(userID);
+  const token = localStorage.getItem("token");
+  console.log(token);
+
+//   if (!userID || userID === "undefined" || userID === "null" || !token) {
+//   return alert("Login required");
+// }
+
+
+  try {
+    const res = await fetch("http://localhost:5000/api/payments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ amount: paymentAmount, userID }) // Include userID here
+    });
+
+    const data = await res.json();
+    if (res.ok) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 5000);
-    }, 1500);
-  };
+    } else {
+      alert(data.message || "Payment failed");
+    }
+  } catch (err) {
+    console.error("Payment error:", err);
+    alert("An error occurred");
+  }
+};
+
+
 
   const handleAddNew = () => {
     setCardType('');
