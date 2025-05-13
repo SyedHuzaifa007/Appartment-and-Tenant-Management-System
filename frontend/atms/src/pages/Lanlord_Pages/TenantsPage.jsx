@@ -198,27 +198,38 @@ const TenantsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tenantsInfo.map((tenant, index) => (
-                            <tr key={index} className="border-b hover:bg-gray-50">
-                                <td className="p-4">{tenant.name}</td>
-                                <td className="p-4">
-                                    {tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}
-                                </td>
-                                <td className="p-4">{tenant.email}</td>
-                                <td className="p-4">{tenant.phone}</td>
-                                <td className="p-4">{tenant.unit}</td>
-                                <td className="p-4">Rs.{tenant.rent}</td>
-                                <td className={`p-4 ${new Date(tenant.dueDate) < new Date() ? 'text-red-500 font-semibold' : ''}`}>{tenant.dueDate}</td>
-                                <td className="p-4 flex gap-2">
-                                    <button className="edit-btn" onClick={() => openTenantForm(tenant._id)}>
-                                        <img className="editIcon" src={editIcon} />
-                                    </button>
-                                    <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}>
-                                        <img className="deleteIcon" src={deleteIcon} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {tenantsInfo.map((tenant, index) => {
+                            const formattedDate = new Date(tenant.dueDate);
+                            const day = String(formattedDate.getDate()).padStart(2, "0");
+                            const month = String(formattedDate.getMonth() + 1).padStart(2, "0");
+                            const year = formattedDate.getFullYear();
+                            const displayDate = `${day}-${month}-${year}`;
+
+                            return (
+                                <tr key={index} className="border-b hover:bg-gray-50">
+                                    <td className="p-4">{tenant.name}</td>
+                                    <td className="p-4">
+                                        {tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}
+                                    </td>
+                                    <td className="p-4">{tenant.email}</td>
+                                    <td className="p-4">{tenant.phone}</td>
+                                    <td className="p-4">{tenant.unit}</td>
+                                    <td className="p-4">Rs.{tenant.rent}</td>
+                                    <td className={`p-4 ${new Date(tenant.dueDate) < new Date() ? 'text-red-500 font-semibold' : ''}`}>
+                                        {displayDate}
+                                    </td>
+                                    <td className="p-4 flex gap-2">
+                                        <button className="edit-btn" onClick={() => openTenantForm(tenant._id)}>
+                                            <img className="editIcon" src={editIcon} />
+                                        </button>
+                                        <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}>
+                                            <img className="deleteIcon" src={deleteIcon} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+
                     </tbody>
                 </table>
             </div>
