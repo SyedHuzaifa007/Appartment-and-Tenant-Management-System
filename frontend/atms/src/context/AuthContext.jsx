@@ -79,10 +79,10 @@ const register = async (name, email, password, role, navigate) => {
         navigate("/landlord/home");
       } else if (res.data.user.role === "tenant" || res.data.user.role === "Tenant") {
         sessionStorage.setItem("showLoginToast", "true");
-        navigate("/tenant");
+        navigate("/tenant/home");
       } else if (res.data.user.role === "maintenance" || res.data.user.role === "Maintenance") {
         sessionStorage.setItem("showLoginToast", "true");
-        navigate("/maintenance");
+        navigate("/maintenance/home");
       } else {
         navigate("/");
       }

@@ -173,7 +173,7 @@ function PropertiesPage() {
                         />
                         <div className="content">
                             <div className="cardMainText">
-                                <h2>{obj.title}</h2>
+                                <h2 className="cardHeading">{obj.title}</h2>
                                 <p className="addr">{obj.address}</p>
                             </div>
                             <div className="details">
@@ -199,7 +199,7 @@ function PropertiesPage() {
             {formVisible && (
                 <div className='modal-overlay'>
                     <div className="modal">
-                        <h3>{formData.id !== null ? "Edit Property" : "Add New Property"}</h3>
+                        <h3 className="h3">{formData.id !== null ? "Edit Property" : "Add New Property"}</h3>
                         <form>
                             <label>Property Name</label>
                             <input placeholder="Enter property name" type="text" name="title" value={formData.title} onChange={handleInputChange} className={errors.title ? "error" : ""} />

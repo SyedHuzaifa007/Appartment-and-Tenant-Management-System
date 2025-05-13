@@ -71,7 +71,7 @@ const TenantsPage = () => {
                     Phone: tenant.phone,
                     Unit: tenant.unit,
                     Rent: tenant.rent.toString(),
-                    DueDate: tenant.dueDate.split('T')[0]  // Format to YYYY-MM-DD for the date input
+                    DueDate: tenant.dueDate.split('T')[0]
                 });
             }
         } else {
@@ -185,38 +185,43 @@ const TenantsPage = () => {
                 <p>Total Units: {units} | Total Tenants: {tenantsInfo.length}</p>
             </div>
 
-            <div className='table-wrapper'>
-                <table className='tenants-table'>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>CNIC</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Unit</th>
-                            <th>Rent</th>
-                            <th>Due Date</th>
-                            <th>Actions</th>
+            <div className="overflow-x-auto p-4">
+                <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+                    <thead className="bg-gray-100">
+                        <tr className="text-left border-b">
+                            <th className="p-4">Name</th>
+                            <th className="p-4">CNIC</th>
+                            <th className="p-4">Email</th>
+                            <th className="p-4">Phone</th>
+                            <th className="p-4">Unit</th>
+                            <th className="p-4">Rent</th>
+                            <th className="p-4">Due Date</th>
+                            <th className="p-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {tenantsInfo.map((tenant, index) => (
-                            <tr key={index}>
-                                <td>{tenant.name}</td>
-                                <td>{tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}</td>
-                                <td>{tenant.email}</td>
-                                <td>{tenant.phone}</td>
-                                <td>{tenant.unit}</td>
-                                <td>Rs.{tenant.rent}</td>
-                                <td className={new Date(tenant.dueDate) < new Date() ? "overdue" : ""}>{tenant.dueDate}</td>
-                                <td>
-                                    <button className='edit-btn' onClick={() => openTenantForm(tenant._id)}><img className="editIcon" src={editIcon} /></button>
-                                    <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}><img className="deleteIcon" src={deleteIcon} /></button>
+                            <tr key={index} className="border-b hover:bg-gray-50">
+                                <td className="p-4">{tenant.name}</td>
+                                <td className="p-4">
+                                    {tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}
+                                </td>
+                                <td className="p-4">{tenant.email}</td>
+                                <td className="p-4">{tenant.phone}</td>
+                                <td className="p-4">{tenant.unit}</td>
+                                <td className="p-4">Rs.{tenant.rent}</td>
+                                <td className={`p-4 ${new Date(tenant.dueDate) < new Date() ? 'text-red-500 font-semibold' : ''}`}>{tenant.dueDate}</td>
+                                <td className="p-4 flex gap-2">
+                                    <button className="edit-btn" onClick={() => openTenantForm(tenant._id)}>
+                                        <img className="editIcon" src={editIcon} />
+                                    </button>
+                                    <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}>
+                                        <img className="deleteIcon" src={deleteIcon} />
+                                    </button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
-
                 </table>
             </div>
 

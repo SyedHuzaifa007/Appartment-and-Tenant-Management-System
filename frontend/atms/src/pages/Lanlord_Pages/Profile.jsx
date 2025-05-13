@@ -114,13 +114,13 @@ const Profile = () => {
             <div className="bg-white shadow-md rounded-2xl p-6 flex flex-col lg:flex-row gap-10">
                 {/* Profile Picture Section */}
                 <div className="flex flex-col items-center">
-                    <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-gray-200">
+                    <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-gray-200 bg-gray-100 flex justify-center items-center">
                         <img
                             src={previewImage || formData.photoUrl || tempImage}
                             alt="Profile"
-                            className="w-full h-full object-cover"
                         />
                     </div>
+
                     <input
                         type="file"
                         accept="image/*"
@@ -135,6 +135,7 @@ const Profile = () => {
                         Upload Photo
                     </label>
                 </div>
+
 
                 {/* Profile Info */}
                 <div className="flex-1 space-y-6">
