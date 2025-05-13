@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Tenant = require('../models/Tenants');
+const User = require('../models/User');
 const Property = require('../models/Properties');
+const bcrypt = require("bcryptjs");
 
 router.get('/:propertyId', async (req, res) => {
     try {
@@ -26,9 +28,7 @@ router.get("/", async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { propertyId, landlordId, name, cnic, email, phone, unit, rent, dueDate } = req.body;
-
-        console.log('Received data:', req.body);
-        
+    
         const newTenant = new Tenant({
             propertyId,
             landlordId,
@@ -41,7 +41,17 @@ router.post('/', async (req, res) => {
             dueDate
         });
 
+        const hashedPassword = await bcrypt.hash("password", 10);
+        const user = new User({ 
+            name,
+            email,
+            password: hashedPassword,
+            role: 'Tenant',
+        });
+
+        await user.save();
         const savedTenant = await newTenant.save();
+        
         await Property.findByIdAndUpdate(
             propertyId,
             { $push: { assignedTo: savedTenant._id } },
