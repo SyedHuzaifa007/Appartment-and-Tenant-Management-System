@@ -39,7 +39,7 @@ body.dark {
     --hoverBlue-color: #244ac9;
 
     --sidebar-hover: rgb(40, 83, 227);
-    --sidebar-selected: rgb(59, 130, 246);
+    --siderbar-selected: rgb(59, 130, 246);
 
     --input-color: #6b7280;
 }

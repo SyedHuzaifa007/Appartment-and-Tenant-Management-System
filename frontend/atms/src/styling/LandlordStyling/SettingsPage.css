@@ -1,8 +1,14 @@
+h2{
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--maintext-color);
+}
+
 .switch {
     position: relative;
     display: inline-block;
-    width: 45px;
-    height: 18px;
+    width: 60px;
+    height: 35px;
 }
 
 .switch input {
