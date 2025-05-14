@@ -16,8 +16,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-      await login(username, password, navigate);
-    }
+    await login(username, password, navigate);
+  }
 
 
   return (
@@ -42,12 +42,12 @@ const Login = () => {
                 </button>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-1 text-center">Welcome back</h2>
-              <p className="text-sm text-gray-600 mb-6 text-center">Enter your credentials to access your account</p>
+              <h2 className="text-2xl font-bold text-black mb-1 text-center">Welcome back</h2>
+              <p className="text-sm text-black mb-6 text-center">Enter your credentials to access your account</p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700"><b>Username</b></label>
+                  <label className="text-sm font-medium text-black"><b>Username</b></label>  {/* Updated color */}
                   <input
                     type="username"
                     value={username}
@@ -58,7 +58,7 @@ const Login = () => {
                 </div>
 
                 <div className="relative">
-                  <label className="text-sm font-medium text-gray-700"><b>Password</b></label>
+                  <label className="text-sm font-medium text-black"><b>Password</b></label>  {/* Updated color */}
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}

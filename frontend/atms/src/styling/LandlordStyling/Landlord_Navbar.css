@@ -34,7 +34,19 @@
   background-color: var(--siderbar-selected);
 }
 
+.sidebar .logo-text {
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .logo-text {
+  display: none;
+}
+
 @media (max-width: 842px) {
+  .sidebar .logo-text {
+    display: none;
+  }
+
   .sidebar {
     width: 70px;
   }

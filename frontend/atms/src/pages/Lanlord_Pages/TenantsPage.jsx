@@ -135,8 +135,6 @@ const TenantsPage = () => {
                 dueDate: formData.DueDate
             };
 
-            console.log("Payload:", payload);
-
             const response = await axiosInstance[method](endpoint, payload);
             const updatedTenant = response.data;
 
@@ -200,27 +198,38 @@ const TenantsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tenantsInfo.map((tenant, index) => (
-                            <tr key={index} className="border-b hover:bg-gray-50">
-                                <td className="p-4">{tenant.name}</td>
-                                <td className="p-4">
-                                    {tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}
-                                </td>
-                                <td className="p-4">{tenant.email}</td>
-                                <td className="p-4">{tenant.phone}</td>
-                                <td className="p-4">{tenant.unit}</td>
-                                <td className="p-4">Rs.{tenant.rent}</td>
-                                <td className={`p-4 ${new Date(tenant.dueDate) < new Date() ? 'text-red-500 font-semibold' : ''}`}>{tenant.dueDate}</td>
-                                <td className="p-4 flex gap-2">
-                                    <button className="edit-btn" onClick={() => openTenantForm(tenant._id)}>
-                                        <img className="editIcon" src={editIcon} />
-                                    </button>
-                                    <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}>
-                                        <img className="deleteIcon" src={deleteIcon} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {tenantsInfo.map((tenant, index) => {
+                            const formattedDate = new Date(tenant.dueDate);
+                            const day = String(formattedDate.getDate()).padStart(2, "0");
+                            const month = String(formattedDate.getMonth() + 1).padStart(2, "0");
+                            const year = formattedDate.getFullYear();
+                            const displayDate = `${day}-${month}-${year}`;
+
+                            return (
+                                <tr key={index} className="border-b hover:bg-gray-50">
+                                    <td className="p-4">{tenant.name}</td>
+                                    <td className="p-4">
+                                        {tenant.cnic.slice(0, 5)}-{tenant.cnic.slice(5, 12)}-{tenant.cnic.slice(12)}
+                                    </td>
+                                    <td className="p-4">{tenant.email}</td>
+                                    <td className="p-4">{tenant.phone}</td>
+                                    <td className="p-4">{tenant.unit}</td>
+                                    <td className="p-4">Rs.{tenant.rent}</td>
+                                    <td className={`p-4 ${new Date(tenant.dueDate) < new Date() ? 'text-red-500 font-semibold' : ''}`}>
+                                        {displayDate}
+                                    </td>
+                                    <td className="p-4 flex gap-2">
+                                        <button className="edit-btn" onClick={() => openTenantForm(tenant._id)}>
+                                            <img className="editIcon" src={editIcon} />
+                                        </button>
+                                        <button className="delete-btn" onClick={() => deleteTenant(tenant._id, tenant.name)}>
+                                            <img className="deleteIcon" src={deleteIcon} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+
                     </tbody>
                 </table>
             </div>
@@ -232,22 +241,22 @@ const TenantsPage = () => {
                         <h3>{formData.id !== null ? "Edit Tenant" : "Add Tenant"}</h3>
                         <form>
                             <label>Name</label>
-                            <input type="text" name="Name" value={formData.Name} onChange={handleInputChange} className={errors.Name ? "error" : ""} />
+                            <input type="text" name="Name" placeholder='Enter Tenant name' value={formData.Name} onChange={handleInputChange} className={errors.Name ? "error" : ""} />
 
                             <label>CNIC</label>
-                            <input type="number" name="CNIC" value={formData.CNIC} onChange={handleInputChange} className={errors.CNIC ? "error" : ""} />
+                            <input type="number" name="CNIC" placeholder='Enter Tenant cnic' value={formData.CNIC} onChange={handleInputChange} className={errors.CNIC ? "error" : ""} />
 
                             <label>Email</label>
-                            <input type="email" name="Email" value={formData.Email} onChange={handleInputChange} className={errors.Email ? "error" : ""} />
+                            <input type="email" name="Email" placeholder='Enter Tenant email' value={formData.Email} onChange={handleInputChange} className={errors.Email ? "error" : ""} />
 
                             <label>Phone</label>
-                            <input type="number" name="Phone" value={formData.Phone} onChange={handleInputChange} className={errors.Phone ? "error" : ""} />
+                            <input type="number" name="Phone" placeholder='Enter Tenant phoneNo' value={formData.Phone} onChange={handleInputChange} className={errors.Phone ? "error" : ""} />
 
                             <label>Unit</label>
-                            <input type="text" name="Unit" value={formData.Unit} onChange={handleInputChange} className={errors.Unit ? "error" : ""} />
+                            <input type="text" name="Unit" placeholder='Enter Tenant unit' value={formData.Unit} onChange={handleInputChange} className={errors.Unit ? "error" : ""} />
 
                             <label>Rent</label>
-                            <input type="number" name="Rent" value={formData.Rent} onChange={handleInputChange} className={errors.Rent ? "error" : ""} />
+                            <input type="number" name="Rent" placeholder='0' value={formData.Rent} onChange={handleInputChange} className={errors.Rent ? "error" : ""} />
 
                             <label>Due Date</label>
                             <input type="date" name="DueDate" value={formData.DueDate} onChange={handleInputChange} className={errors.DueDate ? "error" : ""} />

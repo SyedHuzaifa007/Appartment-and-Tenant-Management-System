@@ -56,13 +56,6 @@ function Maintenance_SettingsPage({ theme, handleThemeToggle }) {
                     <h2>Privacy & Security Settings</h2>
                     <p className='smallText'>Manage your privacy and security preferences</p>
                 </div>
-                <div className='row'>
-                    <div className='imgText'>
-                        <img src={lockIcon} />
-                        <p className='text'>Password</p>
-                    </div>
-                    <button className='changeBtn'>Change Password</button>
-                </div>
                 <button onClick={handleDeletion} className='delBtn'>Delete Account</button>
             </div>}
         </div>

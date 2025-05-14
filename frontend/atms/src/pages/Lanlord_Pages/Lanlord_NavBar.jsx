@@ -12,9 +12,8 @@ import settingsIcon from '../../assets/SettingsIcon_Grey.png';
 const NavLandlord = ({ collapsed }) => {
   return (
     <nav className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-      <div className={`mb-5 mt-0 flex items-center justify-center gap-3 ${collapsed ? 'hidden' : 'flex'}`}>
-      {/* <img src={newHome} alt="Home" className="w-8 h-8" /> */}
-      <h1 className="text-2xl font-bold text-white font-sans tracking-wide">Property Hub</h1>
+      <div className={`mb-5 mt-0 flex items-center justify-center gap-3 ${collapsed ? 'hidden' : ''}`}>
+        <h1 className="text-2xl font-bold text-white font-sans tracking-wide logo-text">Property Hub</h1>
       </div>
 
       <NavLink to="/landlord/home">
