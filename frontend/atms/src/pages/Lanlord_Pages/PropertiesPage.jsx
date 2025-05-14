@@ -5,7 +5,7 @@ import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import axiosInstance from "../../axiosInstance";
 
 function PropertiesPage() {
@@ -40,7 +40,7 @@ function PropertiesPage() {
         }
     }, [userID]);
 
-    const handleNavigation = (propertyId, tit, addr, u) => {
+    const handleNavigation = useCallback( (propertyId, tit, addr, u) => {
         navigate(`/landlord/properties/${propertyId}`, {
             state: {
                 propertyId,
@@ -49,10 +49,10 @@ function PropertiesPage() {
                 units: u,
             }
         });
-    };
+    },[navigate])
 
 
-    const handleDeletion = async (propertyId, propertyName) => {
+    const handleDeletion = useCallback(async (propertyId, propertyName) => {
         const confirmDelete = window.confirm(`Do you wish to delete Property: ${propertyName}?`);
         if (confirmDelete) {
             try {
@@ -64,9 +64,9 @@ function PropertiesPage() {
                 console.error("Error deleting property:", error.message);
             }
         }
-    };
+    },[]);
 
-    const openPropertyForm = (propertyId = null) => {
+    const openPropertyForm = useCallback((propertyId = null) => {
         if (propertyId) {
             const property = propertiesdata.find(p => p._id === propertyId);
             if (property) {
@@ -83,7 +83,9 @@ function PropertiesPage() {
         }
         setErrors({});
         setFormVisible(true);
-    };
+    },[propertiesdata])
+
+    const memoizedProperties = useMemo(() => propertiesdata, [propertiesdata]);
 
     const closePropertyForm = () => {
         setFormVisible(false);
@@ -164,7 +166,7 @@ function PropertiesPage() {
             </div>
 
             <div className="cards">
-                {propertiesdata.map((obj, index) => {
+                {memoizedProperties.map((obj, index) => {
                     return (<div className="singleCard" key={index}>
                         <img
                             src={`http://localhost:5000/${obj.image}`}
