@@ -1,6 +1,6 @@
 import moonIcon from '../../assets/moonIcon.png'
 import '../../styling/LandlordStyling/SettingsPage.css'
-import { useState } from 'react'
+import { useState,useCallback,useMemo } from 'react'
 
 function SettingsPage({ theme, handleThemeToggle }) {
     const [securityMenu, changeSecurityMenu] = useState(false)
@@ -22,15 +22,17 @@ function SettingsPage({ theme, handleThemeToggle }) {
         changeGeneralMenu(false)
         changePaymentMenu(true)
     }
-    function handleDeletion() {
+
+    const handleDeletion = useCallback(()=> {
         const confirmDelete = window.confirm(`Do you wish to delete Account?`);
         if (confirmDelete) {
             alert("Account Deleted Successfully!!")
         }
-    }
-    function handleSaveBtn(){
-        alert("Settings Saved!")
-    }
+    },[]);
+
+    const handleSaveBtn = useCallback(() => {
+        alert('Settings Saved!');
+    }, []);
 
     return (
         <div>
