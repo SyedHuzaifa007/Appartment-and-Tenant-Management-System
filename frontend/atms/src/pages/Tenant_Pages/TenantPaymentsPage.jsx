@@ -5,8 +5,9 @@ import "../../styling/tenants/tenants.css";
 const TenantPaymentsPage = () => {
   const [activeTab, setActiveTab] = React.useState("make-payment");
   const [showToast, setShowToast] = React.useState(false);
+  const [paymentAmount, setPaymentAmount] = React.useState();
 
-  const paymentAmount = 1400;
+
 
   // Payment-methods state
   const [methods, setMethods] = React.useState([
@@ -23,27 +24,28 @@ const TenantPaymentsPage = () => {
   const handlePaymentSubmit = async (e) => {
   e.preventDefault();
 
-  const userID = sessionStorage.getItem("userID");
-  console.log(userID);
-  const token = localStorage.getItem("token");
-  console.log(token);
+  const token = sessionStorage.getItem("token");
 
-//   if (!userID || userID === "undefined" || userID === "null" || !token) {
-//   return alert("Login required");
-// }
+  if (!token || token === "undefined" || token === "null") {
+    return alert("Login required");
+  }
 
+  if (paymentAmount <= 0) {
+    return alert("Invalid payment amount");
+  }
 
   try {
     const res = await fetch("http://localhost:5000/api/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`  
       },
-      body: JSON.stringify({ amount: paymentAmount, userID }) // Include userID here
+      body: JSON.stringify({ amount: paymentAmount }) 
     });
 
     const data = await res.json();
+
     if (res.ok) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 5000);
@@ -55,6 +57,8 @@ const TenantPaymentsPage = () => {
     alert("An error occurred");
   }
 };
+
+
 
 
 
@@ -136,7 +140,13 @@ const TenantPaymentsPage = () => {
                 <label htmlFor="amount">Payment Amount</label>
                 <div className="input-icon-wrapper">
                   <span>$</span>
-                  <input id="amount" type="text" value={paymentAmount} readOnly />
+                 <input
+  id="amount"
+  type="number"
+  value={paymentAmount}
+  onChange={(e) => setPaymentAmount(Number(e.target.value))}
+/>
+
                 </div>
               </div>
 

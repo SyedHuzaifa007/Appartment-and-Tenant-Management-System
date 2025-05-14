@@ -4,6 +4,7 @@ const Tenant = require('../models/Tenants');
 const User = require('../models/User');
 const Property = require('../models/Properties');
 const bcrypt = require("bcryptjs");
+const mongoose = require('mongoose');
 
 router.get('/:propertyId', async (req, res) => {
     try {
@@ -28,8 +29,31 @@ router.get("/", async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { propertyId, landlordId, name, cnic, email, phone, unit, rent, dueDate } = req.body;
-    
-        const newTenant = new Tenant({
+
+        // Check if user with the same email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'A user with this email already exists.' });
+        }
+
+        // Generate a shared ObjectId
+        const sharedId = new mongoose.Types.ObjectId();
+
+        // Create User
+        const hashedPassword = await bcrypt.hash("password", 10);
+        const user = new User({
+            _id: sharedId,
+            name,
+            email,
+            password: hashedPassword,
+            role: 'Tenant',
+        });
+        await user.save();
+
+        // Create Tenant with the same ID
+        const tenant = new Tenant({
+            _id: sharedId,  // Use the same ID
+            userId: sharedId, // Optional but good for clarity
             propertyId,
             landlordId,
             name,
@@ -40,29 +64,22 @@ router.post('/', async (req, res) => {
             rent,
             dueDate
         });
+        const savedTenant = await tenant.save();
 
-        const hashedPassword = await bcrypt.hash("password", 10);
-        const user = new User({ 
-            name,
-            email,
-            password: hashedPassword,
-            role: 'Tenant',
-        });
-
-        await user.save();
-        const savedTenant = await newTenant.save();
-        
+        // Link tenant to property
         await Property.findByIdAndUpdate(
             propertyId,
             { $push: { assignedTo: savedTenant._id } },
             { new: true }
         );
+
         res.status(201).json(savedTenant);
     } catch (error) {
-        console.error(error);
+        console.error("Error saving tenant:", error);
         res.status(500).json({ error: 'Error saving tenant' });
     }
 });
+
 
 router.delete('/:id', async (req, res) => {
     try {

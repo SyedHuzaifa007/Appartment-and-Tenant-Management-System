@@ -1,6 +1,9 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 
 const tenantSchema = new Schema({
+    _id: mongoose.Schema.Types.ObjectId, 
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     propertyId: {
         type: Schema.Types.ObjectId,
         ref: 'Property',

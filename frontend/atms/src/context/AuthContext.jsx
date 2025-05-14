@@ -71,7 +71,7 @@ const register = async (name, email, password, role, navigate) => {
       sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("userID",res.data.user.id);
       console.log("User ID: ", sessionStorage.getItem("userID"));
-      // sessionStorage.setItem("tenantID",res.data.tenant.tid);
+      console.log("Token: ", sessionStorage.getItem("token"));
 
       setUser(res.data.user);
       if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {

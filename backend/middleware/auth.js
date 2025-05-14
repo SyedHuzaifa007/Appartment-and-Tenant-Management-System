@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/Profile");
+const User = require("../models/User");
+const Tenant = require("../models/Tenants");
 
 const auth = async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -11,12 +12,23 @@ const auth = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId).select("-password");
-        if (!user) return res.status(401).json({ message: "User not found" });
+        let user = await User.findById(decoded.id).select("-password");
+        if (!user) {
+            console.log("User not found in User");
+            user = await Tenant.findById(decoded.id).select("-password");
+            if (!user) {
+                  console.log("User not found in Tenants");
+            }
+        }
+
+        if (!user) {
+            return res.status(401).json({ message: "User not found" });
+        }
 
         req.user = user;
         next();
     } catch (err) {
+        console.error("Auth error:", err);
         res.status(401).json({ message: "Invalid token" });
     }
 };
