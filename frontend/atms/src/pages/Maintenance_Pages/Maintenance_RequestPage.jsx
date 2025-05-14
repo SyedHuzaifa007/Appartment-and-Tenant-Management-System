@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -28,12 +29,20 @@ function Maintenance_RequestsPage() {
     const formData = new FormData();
     formData.append("comment", comment);
     formData.append("proof", proof);
-    formData.append("status", isDone ? "sent for review" : selectedRequest.status);
+    formData.append("status", isDone ? "Done" : "Assigned");
 
     try {
-      await axios.put(`http://localhost:5000/api/requests/${selectedRequest._id}`, formData);
+      await axios.put(
+        'http://localhost:5000/api/requests/${selectedRequest._id}',
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setSelectedRequest(null);
-      fetchRequests(); 
+      fetchRequests();
     } catch (err) {
       console.error("Error updating request:", err);
     }
@@ -42,30 +51,33 @@ function Maintenance_RequestsPage() {
   const renderRequestList = (status, title) => (
     <div className="mb-8">
       <h2 className="text-xl font-bold">{title}</h2>
-      {requests.filter(req => req.status === status).length === 0 ? (
+      {requests.filter((req) => req.status === status).length === 0 ? (
         <p>No {title.toLowerCase()}.</p>
       ) : (
         <ul>
-          {requests.filter(req => req.status === status).map((req) => (
-            <li key={req._id} className="border p-3 my-2">
-              <strong>Description:</strong> {req.description} <br />
-              <strong>Feedback:</strong> {req.feedback || "N/A"} <br />
-              <strong>Assigned To:</strong> {req.assignedTo ? req.assignedTo.name : "Not assigned"} <br />
-              {status === "pending" && (
-                <button
-                  className="mt-2 px-4 py-1 bg-blue-500 text-white rounded"
-                  onClick={() => {
-                    setSelectedRequest(req);
-                    setComment("");
-                    setProof(null);
-                    setIsDone(false);
-                  }}
-                >
-                  Open Form
-                </button>
-              )}
-            </li>
-          ))}
+          {requests
+            .filter((req) => req.status === status)
+            .map((req) => (
+              <li key={req._id} className="border p-3 my-2">
+                <strong>Description:</strong> {req.description} <br />
+                <strong>Comment:</strong> {req.comment || "N/A"} <br />
+                <strong>Assigned To:</strong>{" "}
+                {req.assignedTo ? req.assignedTo.name : "Not assigned"} <br />
+                {status === "Pending" && (
+                  <button
+                    className="mt-2 px-4 py-1 bg-blue-500 text-white rounded"
+                    onClick={() => {
+                      setSelectedRequest(req);
+                      setComment("");
+                      setProof(null);
+                      setIsDone(false);
+                    }}
+                  >
+                    Open Form
+                  </button>
+                )}
+              </li>
+            ))}
         </ul>
       )}
     </div>
@@ -76,16 +88,18 @@ function Maintenance_RequestsPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Maintenance Requests</h1>
-      
-      {renderRequestList("pending", "New Maintenance Requests")}
-      {renderRequestList("sent for review", "Requests Sent for Review")}
-      {renderRequestList("completed", "Completed Requests")}
+
+      {renderRequestList("Pending", "New Maintenance Requests")}
+      {renderRequestList("Assigned", "Requests Sent for Review")}
+      {renderRequestList("Done", "Completed Requests")}
 
       {selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded w-96">
             <h3 className="text-lg font-bold mb-2">Update Request</h3>
-            <p><strong>Description:</strong> {selectedRequest.description}</p>
+            <p>
+              <strong>Description:</strong> {selectedRequest.description}
+            </p>
 
             <label className="block mt-3">Upload Proof of Work:</label>
             <input

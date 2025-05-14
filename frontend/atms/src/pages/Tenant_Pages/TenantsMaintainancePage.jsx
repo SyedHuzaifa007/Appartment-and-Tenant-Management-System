@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "../../styling/tenants/Tenants-Maintainance.css";
 
+
 const TenantsMaintenancePage = () => {
   const [formData, setFormData] = useState({
     issueType: '',
@@ -16,57 +17,108 @@ const TenantsMaintenancePage = () => {
   const [submissionMessage, setSubmissionMessage] = useState(null);
   const [requests, setRequests] = useState([]);
 
-  const userID = sessionStorage.getItem("userID");
-  console.log(userID);
-  const tenantID=sessionStorage.getItem("landlordID");
-  console.log(tenantID);
+   const userID = sessionStorage.getItem("userID");
+   var id=0;
+  // console.log("userID----"+ userID);
+  // const tenantID=sessionStorage.getItem("landlordID");
+  // console.log(tenantID);
 
-  // 🔁 Fetch all requests from API
+  const [tenantInfo, setTenantInfo] = useState(null);
+  const[landlordID,setLandlordId]=useState(null);
+
+useEffect(() => {
+  const fetchTenantInfo = async () => {
+    try {
+      console.log("Fetching tenant info for userID:", userID);
+      const res = await axios.get(`http://localhost:5000/api/tenant/user/${userID}`);
+      console.log("Fetched tenant info:", res.data);
+      console.log("Landlord ID in tenant data:", res.data.landlordId); // Add this
+      setTenantInfo(res.data);
+    } catch (error) {
+      console.error("Error fetching tenant info:", error);
+    }
+  };
+  // const fetchLandlordId = async () => {
+  // try {
+  //   const res = await axios.get(`http://localhost:5000/api/tenants/landlord/${userID}`);
+  //   setLandlordId(res.data.landlordId);
+  // } catch (error) {
+  //   console.error("Error fetching landlord ID:", error);
+  // }
+  // };
+
+  if (userID) {
+    fetchTenantInfo();
+    //fetchLandlordId();
+  }
+}, [userID]);
+
+
+  //  Fetch all requests from API
   const fetchRequests = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/requests");
-      setRequests(res.data); // Assumes backend returns an array of requests
-    } catch (error) {
-      console.error("Error fetching requests:", error);
-    }
-  };
+  try {
+    // Fetch all requests and filter by tenantId (which should match userID)
+    const res = await axios.get(`http://localhost:5000/api/requests`);
+    
+    // Filter requests to only show those made by the current user
+    const userRequests = res.data.filter(request => request.tenantId === userID);
+    
+    setRequests(userRequests);
+  } catch (error) {
+    console.error("Error fetching requests:", error);
+  }
+};
 
-  // ⏳ Fetch on component mount
-  useEffect(() => {
+// Fetch on component mount and when userID changes
+useEffect(() => {
+  if (userID) {  // Only fetch if userID exists
     fetchRequests();
-  }, []);
+  }
+}, [userID]);  // Add userID as dependency
 
-  // ✅ Handle submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  //const id=tenantInfo.landlordId;
+  //  Handle submission
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      await axios.post("http://localhost:5000/api/requests", {
-        description: `${formData.title} - ${formData.description}`,
-        feedback: "",
-        landlordId: "landlord001",
-        tenantId: userID,
-        status: "Pending"
-      });
+  if (!tenantInfo) {
+    setSubmissionMessage({ type: "error", text: "Tenant info not loaded yet. Please try again shortly." });
+    return;
+  }
 
-      setSubmissionMessage({ type: "success", text: "Request submitted successfully." });
-      setFormData({
-        issueType: '',
-        title: '',
-        description: '',
-        location: '',
-        accessInstructions: '',
-        isEmergency: false,
-      });
+  if (!tenantInfo.landlordId) {
+    setSubmissionMessage({ type: "error", text: "Landlord information is missing. Please contact support." });
+    return;
+  }
 
-      await fetchRequests(); // Refresh request list
-    } catch (error) {
-      console.error("Error submitting request:", error);
-      setSubmissionMessage({ type: "error", text: "Failed to submit request. Please try again." });
-    }
-  };
+  try {
+    await axios.post("http://localhost:5000/api/requests", {
+      description: `${formData.title} - ${formData.description}`,
+      feedback: "",
+      landlordId: tenantInfo.landlordId,
+      tenantId: userID,
+      status: "Pending"
+    });
 
-  // 🔍 Filtered requests
+    setSubmissionMessage({ type: "success", text: "Request submitted successfully." });
+    setFormData({
+      issueType: '',
+      title: '',
+      description: '',
+      location: '',
+      accessInstructions: '',
+      isEmergency: false,
+    });
+
+    await fetchRequests();
+  } catch (error) {
+    console.error("Error submitting request:", error);
+    setSubmissionMessage({ type: "error", text: "Failed to submit request. Please try again." });
+  }
+};
+
+
+  //  Filtered requests
   const activeRequests = requests.filter(req => req.status === "Pending" || req.status === "In Progress");
   const completedRequests = requests.filter(req => req.status === "Completed");
 

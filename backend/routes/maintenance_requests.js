@@ -1,26 +1,75 @@
+
 const express = require("express");
+const multer = require("multer");
 const Request = require("../models/MaintenanceRequest");
 const router = express.Router();
 
+// Setup for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
+});
+const upload = multer({ storage });
+
+// GET all requests
 router.get("/", async (req, res) => {
-  const requests = await Request.find().populate("assignedTo");
-  res.json(requests);
+  try {
+    const requests = await Request.find().populate("assignedTo");
+    res.json(requests);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch requests" });
+  }
 });
 
+// POST a new request
 router.post("/", async (req, res) => {
-  const request = new Request(req.body);
-  await request.save();
-  res.status(201).json(request);
+  try {
+    const request = new Request(req.body);
+    await request.save();
+    res.status(201).json(request);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create request" });
+  }
 });
 
+// PATCH to update request (no file)
 router.patch("/:id", async (req, res) => {
-  const request = await Request.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(request);
+  try {
+    const updated = await Request.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update request" });
+  }
 });
 
+// PUT with file upload (proof + comment)
+router.put("/:id", upload.single("proof"), async (req, res) => {
+  try {
+    const { comment, status } = req.body;
+    const proofFilePath = req.file ? req.file.path : undefined;
+
+    const updateData = { comment, status };
+    if (proofFilePath) updateData.proofFilePath = proofFilePath;
+
+    const updatedRequest = await Request.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true }
+    );
+    res.json(updatedRequest);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update request with proof" });
+  }
+});
+
+// DELETE a request
 router.delete("/:id", async (req, res) => {
-  await Request.findByIdAndDelete(req.params.id);
-  res.status(204).end();
+  try {
+    await Request.findByIdAndDelete(req.params.id);
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete request" });
+  }
 });
 
 module.exports = router;

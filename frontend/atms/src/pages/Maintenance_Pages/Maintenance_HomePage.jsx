@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -8,7 +9,7 @@ const Maintenance_HomePage = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/requests'); // Adjust URL if needed
+        const response = await axios.get('http://localhost:5000/api/requests'); 
         setRequests(response.data);
       } catch (error) {
         console.error('Error fetching requests:', error);
@@ -20,8 +21,8 @@ const Maintenance_HomePage = () => {
     fetchRequests();
   }, []);
 
-  const completed = requests.filter(req => req.status === 'Completed');
-  const ongoing = requests.filter(req => req.status === 'Ongoing');
+  const completed = requests.filter(req => req.status === 'Done');
+  const ongoing = requests.filter(req => req.status === 'Pending' || req.status === 'Assigned');  
 
   if (loading) return <p className="p-6">Loading...</p>;
 
@@ -37,7 +38,7 @@ const Maintenance_HomePage = () => {
             {completed.length > 0 ? (
               <ul className="list-disc list-inside text-gray-700">
                 {completed.map(req => (
-                  <li key={req._id}>{req.title}</li>
+                  <li key={req._id}>{req.description}</li>
                 ))}
               </ul>
             ) : (

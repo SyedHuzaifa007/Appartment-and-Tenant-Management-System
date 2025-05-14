@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Property = require('../models/Properties');
 const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose');
+const authMiddleware = require("../middleware/auth");
 
 router.get('/:propertyId', async (req, res) => {
     try {
@@ -25,6 +26,39 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Get tenant by userId
+router.get("/user/:userId", async (req, res) => {
+  console.log("HIT: /user/:userId with", req.params.userId);
+
+  try {
+    const tenant = await Tenant.findOne({ userId: req.params.userId });
+
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    res.status(200).json(tenant);
+  } catch (error) {
+    console.error("ERROR:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Add this to your tenant routes
+router.get("/landlord/:tenantId", async (req, res) => {
+  try {
+    const tenant = await Tenant.findById(req.params.tenantId);
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+    res.status(200).json({ landlordId: tenant.landlordId });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 
 router.post('/', async (req, res) => {
     try {
@@ -101,18 +135,18 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-router.put('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updatedData = req.body;
-        const updatedTenant = await Tenant.findByIdAndUpdate(id, updatedData, { new: true });
-        if (!updatedTenant) {
-            return res.status(404).json({ error: 'Tenant not found' });
-        }
-        res.status(200).json(updatedTenant);
-    } catch (error) {
-        res.status(500).json({ error: 'Error updating tenant' });
-    }
-});
+// router.put('/:id', async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const updatedData = req.body;
+//         const updatedTenant = await Tenant.findByIdAndUpdate(id, updatedData, { new: true });
+//         if (!updatedTenant) {
+//             return res.status(404).json({ error: 'Tenant not found' });
+//         }
+//         res.status(200).json(updatedTenant);
+//     } catch (error) {
+//         res.status(500).json({ error: 'Error updating tenant' });
+//     }
+// });
 
 module.exports = router;
