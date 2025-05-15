@@ -144,7 +144,7 @@ function StaffPage() {
   );
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 min-h-screen" >
       <ToastContainer />
       <NewRequestsList/>
 
@@ -152,7 +152,7 @@ function StaffPage() {
       
 
       {editingWorker && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-30">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-30" >
           <div className="relative bg-gray-100 p-6 rounded-xl shadow-lg w-full max-w-md mx-4">
             {/* Close Button */}
             <button

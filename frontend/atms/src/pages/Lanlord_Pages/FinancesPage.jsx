@@ -40,7 +40,7 @@ function FinancesPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800 border-b-4 border-indigo-600 pb-2 text-center">
+      <h1 className="text-4xl font-bold mb-8 text-gray-800 border-b-4 border-indigo-600 pb-2 text-center" style={{color:"var(--maintext-color)"}}>
         Finances
       </h1>
 

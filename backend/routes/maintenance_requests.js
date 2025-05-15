@@ -74,7 +74,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Example Express PUT route for updating a request
-app.put('/api/requests/:id', async (req, res) => {
+router.put('/api/requests/:id', async (req, res) => {
   const { id } = req.params;
   const { assignedTo, comments } = req.body;
 
