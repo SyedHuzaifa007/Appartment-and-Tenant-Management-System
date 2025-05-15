@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
-const Tenant=require("../models/Tenants");
 require("dotenv").config();
 
 const router = express.Router();
@@ -49,28 +48,15 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    
-    const tenant = await Tenant.findOne({name});
-
-
-    if (!tenant) {
-      return res.status(404).json({ message: "Tenant not found" });
-    }
-
-
     const token = jwt.sign(
-      { id: user._id, role: user.role,tid:tenant._id,lId:tenant.landlordId },
-      process.env.JWT_SECRET || "your_secret",
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    
     res.json({
       token,
-      tenant:{tid : tenant._id,landlordId: tenant.landlordId},
-      user: { id: user._id, name: user.name, role: user.role }
-      
-
+      user: { id: user._id, name: user.name, role: user.role },
     });
   } catch (err) {
     console.error("Login error:", err);

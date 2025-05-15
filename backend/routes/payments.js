@@ -1,20 +1,26 @@
 const express = require("express");
 const Payment = require("../models/Payments");
 const Tenant = require("../models/Tenants");
+const User = require("../models/User");
 const authMiddleware = require("../middleware/auth"); 
+const { getRecentPayments } = require("../controllers/paymentController");
 
 const router = express.Router();
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const tenantId = req.user.id;
+    const userID = req.user._id;
+    const { amount } = req.body;
 
-    const tenant = await Tenant.findOne({ _id: tenantId });
+    const user = await User.findById(userID);
+    console.log("UserID from auth middleware: ", userID);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const tenant = await Tenant.findOne({ userId: user._id }); 
     if (!tenant) return res.status(404).json({ message: "Tenant not found" });
 
-    const { amount } = req.body;
     const newPayment = new Payment({
-      tenantId,
+      tenantId: tenant._id,
       landlordId: tenant.landlordId,
       amount
     });
@@ -26,5 +32,7 @@ router.post("/", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.get('/recent', getRecentPayments);
 
 module.exports = router;

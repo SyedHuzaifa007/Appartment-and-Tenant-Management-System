@@ -29,6 +29,8 @@ import Maintenance_RequestsPage from "./pages/Maintenance_Pages/Maintenance_Requ
 import Maintenance_ProfilePage from "./pages/Maintenance_Pages/Maintenance_ProfilePage";
 import Maintenance_SettingsPage from "./pages/Maintenance_Pages/Maintenance_SettingsPage";
 import Maintenance_Layout from "./pages/Maintenance_Pages/Maintenance_Layout";
+import ProtectedRoute from "../../ProtectedRoute";
+import NotFound from "./pages/NotFound";
 
 
 function App() {
@@ -57,10 +59,10 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          {/* <Route path="/" element={<Login />} /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+          <Route element={<ProtectedRoute />}>
           <Route path="/landlord" element={<LandlordLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="properties" element={<PropertiesPage />} />
@@ -69,22 +71,30 @@ function App() {
             <Route path="finances" element={<FinancesPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="settings" element={<SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
+                      <Route path="*" element={<NotFound />} />
+            </Route>
           </Route>
 
+ <Route element={<ProtectedRoute />}>
           <Route path="/tenant" element={<TenantLayout />}>
             <Route path="home" element={<THomePage />} />
             <Route path="payments" element={<TPayments />} />
             <Route path="maintenance" element={<TMaintainance />} />
             <Route path="profile" element={<TProfile />} />
             <Route path="settings" element={<TSettings theme={theme} handleThemeToggle={handleThemeToggle} />} />
+                      <Route path="*" element={<NotFound />} />
+          </Route>
           </Route>
 
+ <Route element={<ProtectedRoute />}>
           <Route path="/maintenance" element={<Maintenance_Layout />}>
           <Route path="home" element={<Maintenance_HomePage />} />
           <Route path="requests" element={<Maintenance_RequestsPage />} />
           <Route path="profile" element={<Maintenance_ProfilePage />} />
           <Route path="settings" element={<Maintenance_SettingsPage theme={theme} handleThemeToggle={handleThemeToggle} />} />
           </Route>
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>
