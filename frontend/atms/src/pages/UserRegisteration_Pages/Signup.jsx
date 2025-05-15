@@ -76,7 +76,7 @@ const Signup = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-[38px]"
+              className="absolute right-3 top-[30px]"
               tabIndex={-1}
             >
               <img

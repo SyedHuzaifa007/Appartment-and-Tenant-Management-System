@@ -111,7 +111,7 @@ const Profile = () => {
     return (
         <div className="max-w-5xl mx-auto p-6">
             <h2 className="text-3xl font-semibold text-center mb-8">My Profile</h2>
-            <div className="bg-white shadow-md rounded-2xl p-6 flex flex-col lg:flex-row gap-10">
+            <div className="shadow-md rounded-2xl p-6 flex flex-col lg:flex-row gap-10" style={{color:"var(--background-color)"}}>
                 {/* Profile Picture Section */}
                 <div className="flex flex-col items-center">
                     <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-gray-200 bg-gray-100 flex justify-center items-center">
@@ -130,18 +130,19 @@ const Profile = () => {
                     />
                     <label
                         htmlFor="photo-upload"
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700"
+                        className="bg-blue-600 px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700"
+                        style={{color:"var(--maintext-color)"}}
                     >
                         Upload Photo
                     </label>
-                </div>
 
+                </div>
 
                 {/* Profile Info */}
                 <div className="flex-1 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-gray-700 font-medium mb-1">Full Name</label>
+                            <label className="block text-gray-700 font-medium mb-1" style={{color:"var(--maintext-color)"}}>Full Name</label>
                             <input
                                 type="text"
                                 name="name"
@@ -151,7 +152,7 @@ const Profile = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 font-medium mb-1">Email</label>
+                            <label className="block text-gray-700 font-medium mb-1" >Email</label>
                             <input
                                 type="email"
                                 name="email"
@@ -172,18 +173,19 @@ const Profile = () => {
                         </button>
                         <button
                             onClick={handleSave}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
                             Save Changes
                         </button>
+
                     </div>
 
                     {/* Password Change Section */}
                     <div className="mt-10">
-                        <h3 className="text-xl font-semibold mb-4">Change Password</h3>
+                        <h3 className="text-xl font-semibold mb-4" >Change Password</h3>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-gray-700 font-medium mb-1">Current Password</label>
+                                <label className="block text-gray-700 font-medium mb-1" >Current Password</label>
                                 <input
                                     type="password"
                                     name="currentPassword"
