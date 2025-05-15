@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
+const authMiddleware = require("../middleware/auth");
 require("dotenv").config();
 
 const router = express.Router();
@@ -64,21 +65,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ message: "No token, authorization denied" });
-
-  try {
-    const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: "Token is not valid" });
-  }
-};
 
 router.get("/profile", authMiddleware, async (req, res) => {
-  const user = await User.findById(req.user.id).select("-password");
+  const user = await User.findById(req.user._id).select("-password");
   res.json(user);
 });
 
@@ -86,7 +75,7 @@ router.put("/profile", authMiddleware, async (req, res) => {
   try {
     const { name, email, photoUrl } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { name, email, photoUrl },
       { new: true, runValidators: true }
     ).select("-password");
@@ -96,6 +85,7 @@ router.put("/profile", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 
 module.exports = router;

@@ -5,6 +5,11 @@ import {
 } from "recharts";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import { useRef } from "react";
+
+
+
 
 
 const incomeExpenseData = [
@@ -38,9 +43,11 @@ const rentalStatusData = [
 
 const HomePage = () => {
 
-  useEffect(() => {
-  const userId = sessionStorage.getItem("userId");
+const notifiedPayments = useRef(new Set());
+useEffect(() => {
+  const userId = sessionStorage.getItem("userID");
   const showLoginToast = sessionStorage.getItem("showLoginToast");
+
   if (showLoginToast === "true") {
     toast.success("Login successful!", {
       position: "top-right",
@@ -52,30 +59,28 @@ const HomePage = () => {
   }
 
   const fetchRecentPayments = async () => {
-    console.log("In fetch payments function")
     try {
       const res = await fetch("http://localhost:5000/api/payments/recent?hours=12", {
-      credentials: 'include'
-  });
+        credentials: 'include',
+      });
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const payments = await res.json();
 
-      console.log("Hit /api/payments/recent");
-      res.json({ test: true }); 
-
-      
-
       for (const payment of payments) {
-        if (payment.landlordId === userId) {
-          const tenantRes = await fetch(`/api/tenants/${payment.tenantId}`);
-          const tenantData = await tenantRes.json();
-
-          toast.info(`Rent received from ${tenantData.name}`, {
+        // Check if this payment was already notified
+        if (
+          payment.landlordId === userId &&
+          !notifiedPayments.current.has(payment._id)
+        ) {
+          toast.info(`Rent received from ${payment.tenantName}`, {
             position: "top-right",
             autoClose: 4000,
             pauseOnHover: true,
             theme: "light",
           });
+          notifiedPayments.current.add(payment._id); // mark as notified
         }
       }
     } catch (err) {
@@ -86,11 +91,14 @@ const HomePage = () => {
   fetchRecentPayments();
 }, []);
 
+
+
   
   
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      <ToastContainer />
      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Landlord Dashboard</h1>
      <br />
 
