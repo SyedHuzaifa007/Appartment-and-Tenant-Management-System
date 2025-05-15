@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import buildingIcon from '../../assets/PropertyIcon_Blue.png'
 import '../../styling/LandlordStyling/TenantsPage.css'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import editIcon from '../../assets/EditIcon_Black.png'
 import deleteIcon from '../../assets/DeleteIcon_Red.png'
 import axiosInstance from "../../axiosInstance";
@@ -27,11 +27,13 @@ const TenantsPage = () => {
         }
     }, [propertyId]);
 
-    const HandleNavigation = () => {
-        navigate(-1);
-    }
+    const memoizedTenants = useMemo(() => tenantsInfo, [tenantsInfo]);
 
-    const deleteTenant = async (tenantId, tenantName) => {
+    const HandleNavigation =useCallback(() => {
+        navigate(-1);
+    },[navigate])
+
+    const deleteTenant = useCallback( async (tenantId, tenantName) => {
         const confirmDelete = window.confirm(`Do you wish to delete Tenant: ${tenantName}?`);
         if (confirmDelete) {
             try {
@@ -43,7 +45,7 @@ const TenantsPage = () => {
                 console.error("Error deleting Tenant:", error.message);
             }
         }
-    };
+    },[]);
 
     const [formVisible, setFormVisible] = useState(false);
     const [formData, setFormData] = useState({
@@ -59,7 +61,7 @@ const TenantsPage = () => {
 
     const [errors, setErrors] = useState({});
 
-    const openTenantForm = (tid = null) => {
+    const openTenantForm = useCallback((tid = null) => {
         if (tid) {
             const tenant = tenantsInfo.find(t => t._id === tid);
             if (tenant) {
@@ -88,14 +90,14 @@ const TenantsPage = () => {
         }
         setErrors({});
         setFormVisible(true);
-    };
+    },[tenantsInfo]);
 
 
-    const closeTenantForm = () => {
+    const closeTenantForm = useCallback(() => {
         setFormVisible(false);
-    };
+    },[]);
 
-    const handleInputChange = (e) => {
+    const handleInputChange =(e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
@@ -105,7 +107,7 @@ const TenantsPage = () => {
         }));
     };
 
-    const saveTenant = async () => {
+    const saveTenant = useCallback(async () => {
         let newErrors = {};
         Object.keys(formData).forEach((key) => {
             if (key !== "id" && formData[key].trim() === "") {
@@ -164,7 +166,7 @@ const TenantsPage = () => {
             console.error("Error saving tenant:", error);
             alert("Error saving tenant");
         }
-    };
+    },[formData,propertyId,landlordId]);
 
     return (
         <div>
@@ -198,7 +200,7 @@ const TenantsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tenantsInfo.map((tenant, index) => {
+                        {memoizedTenants.map((tenant, index) => {
                             const formattedDate = new Date(tenant.dueDate);
                             const day = String(formattedDate.getDate()).padStart(2, "0");
                             const month = String(formattedDate.getMonth() + 1).padStart(2, "0");

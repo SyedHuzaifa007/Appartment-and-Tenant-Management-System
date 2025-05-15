@@ -6,7 +6,8 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(() => sessionStorage.getItem("token") || localStorage.getItem("token"));
+
 
   useEffect(() => {
     if (token) {
@@ -72,6 +73,7 @@ const register = async (name, email, password, role, navigate) => {
       sessionStorage.setItem("userID",res.data.user.id);
       console.log("User ID: ", sessionStorage.getItem("userID"));
       console.log("Token: ", sessionStorage.getItem("token"));
+      // sessionStorage.setItem("tenantID",res.data.tenant.tid);
 
       setUser(res.data.user);
       if (res.data.user.role === "landlord" || res.data.user.role === "Landlord") {

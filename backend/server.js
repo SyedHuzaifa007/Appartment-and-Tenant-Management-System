@@ -40,6 +40,7 @@ app.use("/api/profile", require("./routes/profile"));
 app.use("/api/payments", paymentRoutes);
 
 
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 

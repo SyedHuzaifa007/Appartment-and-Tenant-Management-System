@@ -5,6 +5,11 @@ import {
 } from "recharts";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import { useRef } from "react";
+
+
+
 
 
 const incomeExpenseData = [
@@ -38,27 +43,62 @@ const rentalStatusData = [
 
 const HomePage = () => {
 
-  useEffect(() => {
-    console.log("In UseEffect");
-    const shouldShowToast = sessionStorage.getItem("showLoginToast");
-    console.log(shouldShowToast);
-    if (shouldShowToast === "true") {
-      console.log("Inside condition")
-      console.log(shouldShowToast);
-      toast.success("Login successful!", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: true,
-        theme: "colored",
+const notifiedPayments = useRef(new Set());
+useEffect(() => {
+  const userId = sessionStorage.getItem("userID");
+  const showLoginToast = sessionStorage.getItem("showLoginToast");
+
+  if (showLoginToast === "true") {
+    toast.success("Login successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      pauseOnHover: true,
+      theme: "colored",
+    });
+    sessionStorage.removeItem("showLoginToast");
+  }
+
+  const fetchRecentPayments = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/payments/recent?hours=12", {
+        credentials: 'include',
       });
-      sessionStorage.removeItem("showLoginToast");
+
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+      const payments = await res.json();
+
+      for (const payment of payments) {
+        // Check if this payment was already notified
+        if (
+          payment.landlordId === userId &&
+          !notifiedPayments.current.has(payment._id)
+        ) {
+          toast.info(`Rent received from ${payment.tenantName}`, {
+            position: "top-right",
+            autoClose: 4000,
+            pauseOnHover: true,
+            theme: "light",
+          });
+          notifiedPayments.current.add(payment._id); // mark as notified
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch rent payment notifications:", err);
     }
-  }, []);
+  };
+
+  fetchRecentPayments();
+}, []);
+
+
+
   
   
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      <ToastContainer />
      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Landlord Dashboard</h1>
      <br />
 
