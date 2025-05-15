@@ -3,27 +3,39 @@ const mongoose = require('mongoose');
 const Payment = require('../models/Payments'); 
 const Tenant = require('../models/Tenants');   
 
+// controllers/paymentController.js (or wherever your route logic is)
+
+const Property = require('../models/Properties');
+
 exports.getRecentPayments = async (req, res) => {
   try {
-    const hours = parseInt(req.query.hours) || 12;
+    const limit = parseInt(req.query.limit) || 10;
+    const hours = parseInt(req.query.hours) || 24;
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
 
-    const recentPayments = await Payment.find({ date: { $gte: since } })
-      .populate({ path: 'tenantId', select: 'name' }) // populate tenant name
-      .lean(); // faster, returns plain JS objects
+    // Get recent payments
+    const payments = await Payment.find({ date: { $gte: since } })
+      .sort({ date: -1 })
+      .limit(limit)
+      .lean();
 
-    const formatted = recentPayments.map(p => ({
-      _id: p._id,
-      tenantId: p.tenantId._id,
-      tenantName: p.tenantId.name,
-      landlordId: p.landlordId,
-      amount: p.amount,
-      date: p.date
-    }));
+    // Enrich with tenant and property name
+    const enriched = await Promise.all(
+      payments.map(async (payment) => {
+        const tenant = await Tenant.findById(payment.tenantId).lean();
+        const property = tenant ? await Property.findById(tenant.propertyId).lean() : null;
 
-    res.json(formatted);
+        return {
+          ...payment,
+          tenantName: tenant?.name || "Unknown",
+          propertyName: property?.name || "Unknown",
+        };
+      })
+    );
+
+    res.json(enriched);
   } catch (err) {
-    console.error("Error in getRecentPayments:", err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching enriched payments:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

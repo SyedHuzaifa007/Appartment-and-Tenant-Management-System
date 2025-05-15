@@ -125,7 +125,7 @@ const TenantPaymentsPage = () => {
       {showToast && (
         <div className="toast">
           <strong>Payment Successful</strong>
-          <div>Your payment of ${paymentAmount} has been processed successfully.</div>
+          <div>Your payment of PKR {paymentAmount} has been processed successfully.</div>
         </div>
       )}
 
@@ -139,7 +139,7 @@ const TenantPaymentsPage = () => {
               <div className="form-group">
                 <label htmlFor="amount">Payment Amount</label>
                 <div className="input-icon-wrapper">
-                  <span>$</span>
+                  <span>PKR</span>
                  <input
   id="amount"
   type="number"
@@ -172,20 +172,20 @@ const TenantPaymentsPage = () => {
             <h2>Payment Summary</h2>
             <div className="summary-item">
               <span>Monthly Rent</span>
-              <span>${paymentAmount}</span>
+              <span>PKR {paymentAmount}</span>
             </div>
             <div className="summary-item">
               <span>Late Fees</span>
-              <span>$0.00</span>
+              <span>PKR 0.00</span>
             </div>
             <div className="summary-item">
               <span>Previous Balance</span>
-              <span>$0.00</span>
+              <span>PKR 0.00</span>
             </div>
             <hr />
             <div className="summary-item summary-total">
               <span>Total Due</span>
-              <span>${paymentAmount}</span>
+              <span>PKR {paymentAmount}</span>
             </div>
             
           </div>

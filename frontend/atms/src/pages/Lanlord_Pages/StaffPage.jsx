@@ -23,16 +23,20 @@ function StaffPage() {
       .then((res) => setWorkers(res.data))
       .catch((err) => console.error(err));
 
-    axiosInstance
-      .get("/api/requests")
-      .then((res) => {
-        const allRequests = res.data.requests || [];
-        setRequests(allRequests.filter((req) => req.status === "Pending"));
-        setAssignedRequests(
-          allRequests.filter((req) => req.status === "Assigned")
-        );
-      })
-      .catch((err) => console.error(err));
+axiosInstance
+    .get("/api/requests")
+    .then((res) => { 
+      const allRequests = res.data.requests || [];
+
+      // Filter requests by landlordId matching userID
+      const filteredRequests = allRequests.filter(
+        (req) => req.landlordId === userID
+      );
+
+      setRequests(filteredRequests.filter((req) => req.status === "Pending"));
+      setAssignedRequests(filteredRequests.filter((req) => req.status === "Assigned"));
+    })
+    .catch((err) => console.error(err));
   }, []);
 
   const [formData, setFormData] = useState({
@@ -199,84 +203,62 @@ function StaffPage() {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <ToastContainer />
-      {/* Section: New Maintenance Requests */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-center">
-          New Requests
-        </h2>
-        <br />
-        <div className="space-y-4">
-          {requests.length === 0 ? (
-            <p className="text-center text-gray-500">
-              No new maintenance requests
-            </p>
-          ) : (
-            requests.map((request) => (
-              <div
-                key={request.id}
-                className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow-md"
-              >
-                {/* Decline (X) Button */}
-                <button
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl font-bold"
-                  onClick={() => {
-                    const confirmed = window.confirm(
-                      "Are you sure you want to decline this request?"
-                    );
-                    if (confirmed) {
-                      handleDeclineRequest(request.id, "pending");
-                    }
-                  }}
-                >
-                  &times;
-                </button>
+      {requests.map((request) => (
+  <div
+    key={request._id}
+    className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-lg shadow-md"
+  >
+    <button
+      className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl font-bold"
+      onClick={() => {
+        const confirmed = window.confirm(
+          "Are you sure you want to decline this request?"
+        );
+        if (confirmed) {
+          handleDeclineRequest(request._id, "pending");
+        }
+      }}
+    >
+      &times;
+    </button>
 
-                <span className="text-sm text-gray-600 mb-2 sm:mb-0">
-                  {request.description}
-                </span>
+    <span className="text-sm text-gray-600 mb-2 sm:mb-0">
+      {request.description}
+    </span>
 
-                {/* Status Tag */}
-                <span
-                  className={`px-2 py-1 text-xs rounded-full font-semibold 
-              ${request.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : ""
-                    }
-              ${request.status === "Assigned" ? "bg-blue-100 text-blue-800" : ""
-                    }
-              ${request.status === "Done" ? "bg-green-100 text-green-800" : ""}
-            `}
-                >
-                  {request.status}
-                </span>
+    <span
+      className={`px-2 py-1 text-xs rounded-full font-semibold 
+          ${request.status === "Pending" ? "bg-yellow-100 text-yellow-800" : ""}
+          ${request.status === "Assigned" ? "bg-blue-100 text-blue-800" : ""}
+          ${request.status === "Done" ? "bg-green-100 text-green-800" : ""}
+        `}
+    >
+      {request.status}
+    </span>
 
-                <div className="flex items-center space-x-2 mt-2 sm:mt-0">
-                  <select
-                    className="px-4 py-2 border border-gray-300 rounded-md"
-                    value={request.assignedTo}
-                    onChange={(e) =>
-                      handleAssignRequest(e.target.value, request.id)
-                    }
-                  >
-                    <option value="">Assign Request</option>
-                    {workers.map((worker) => (
-                      <option key={worker.id} value={worker.id}>
-                        {worker.name}
-                      </option>
-                    ))}
-                  </select>
-                  <textarea
-                    className="px-4 py-2 border border-gray-300 rounded-md w-48"
-                    placeholder="Add Notes"
-                    value={request.feedback}
-                    onChange={(e) => handleFeedbackChange(e, request.id)}
-                  />
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+    <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+      <select
+        className="px-4 py-2 border border-gray-300 rounded-md"
+        value={request.assignedTo || ""}
+        onChange={(e) => handleAssignRequest(e.target.value, request._id)}
+      >
+        <option value="">Assign Request</option>
+        {workers.map((worker) => (
+          <option key={worker._id} value={worker._id}>
+            {worker.name}
+          </option>
+        ))}
+      </select>
+      <textarea
+        className="px-4 py-2 border border-gray-300 rounded-md w-48"
+        placeholder="Add Notes"
+        value={request.feedback}
+        onChange={(e) => handleFeedbackChange(e, request._id)}
+      />
+    </div>
+  </div>
+))}
+
 
       <br />
       <br />

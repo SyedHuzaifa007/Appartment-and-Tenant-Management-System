@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  LineChart, Line, CartesianGrid, Legend, PieChart, Pie, Cell
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
-import { toast } from "react-toastify";
-import { useEffect } from "react";
-import { ToastContainer } from "react-toastify";
-import { useRef } from "react";
-
-
-
-
+import { toast, ToastContainer } from "react-toastify";
+import RentalStatusCard from "./RentalStatusCard";
 
 const incomeExpenseData = [
   { month: "Jan", income: 12000, expense: 8000 },
@@ -33,81 +38,105 @@ const incomeByProperty = [
   { name: "Greenview Homes", value: 1900 },
 ];
 
-const rentalStatusData = [
-  { tenant: "Alice Johnson", property: "Maple Apartments", status: "Received" },
-  { tenant: "Bob Smith", property: "Sunset Villas", status: "Due" },
-  { tenant: "Carla Ruiz", property: "Downtown Lofts", status: "Received" },
-  { tenant: "Daniel Kim", property: "Greenview Homes", status: "Due" },
-];
-
-
 const HomePage = () => {
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [loadingIncome, setLoadingIncome] = useState(true);
+  const notifiedPayments = useRef(new Set());
 
-const notifiedPayments = useRef(new Set());
-useEffect(() => {
-  const userId = sessionStorage.getItem("userID");
-  const showLoginToast = sessionStorage.getItem("showLoginToast");
-
-  if (showLoginToast === "true") {
-    toast.success("Login successful!", {
-      position: "top-right",
-      autoClose: 3000,
-      pauseOnHover: true,
-      theme: "colored",
-    });
-    sessionStorage.removeItem("showLoginToast");
-  }
-
-  const fetchRecentPayments = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/payments/recent?hours=12", {
-        credentials: 'include',
+  useEffect(() => {
+    // Show login toast if needed
+    const showLoginToast = sessionStorage.getItem("showLoginToast");
+    if (showLoginToast === "true") {
+      toast.success("Login successful!", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: true,
+        theme: "colored",
       });
-
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-      const payments = await res.json();
-
-      for (const payment of payments) {
-        // Check if this payment was already notified
-        if (
-          payment.landlordId === userId &&
-          !notifiedPayments.current.has(payment._id)
-        ) {
-          toast.info(`Rent received from ${payment.tenantName}`, {
-            position: "top-right",
-            autoClose: 4000,
-            pauseOnHover: true,
-            theme: "light",
-          });
-          notifiedPayments.current.add(payment._id); // mark as notified
-        }
-      }
-    } catch (err) {
-      console.error("Failed to fetch rent payment notifications:", err);
+      sessionStorage.removeItem("showLoginToast");
     }
-  };
 
-  fetchRecentPayments();
-}, []);
+    // Fetch recent payments for notifications
+    const fetchRecentPayments = async () => {
+      try {
+        const userId = sessionStorage.getItem("userID");
+        const res = await fetch(
+          "http://localhost:5000/api/payments/recent?hours=12",
+          { credentials: "include" }
+        );
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const payments = await res.json();
+
+        for (const payment of payments) {
+          if (
+            payment.landlordId === userId &&
+            !notifiedPayments.current.has(payment._id)
+          ) {
+            toast.success(`Rent received from ${payment.tenantName}`, {
+              position: "top-right",
+              autoClose: 3000,
+              pauseOnHover: true,
+              theme: "light",
+            });
+            notifiedPayments.current.add(payment._id);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch rent payment notifications:", err);
+      }
+    };
+
+    // Fetch total income for current month
+    const fetchTotalIncome = async () => {
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+    console.log("Fetching payments from", startOfMonth, "to", endOfMonth);
+
+    const res = await fetch(
+      `http://localhost:5000/api/payments?startDate=${startOfMonth}&endDate=${endOfMonth}`,
+      { credentials: "include" }
+    );
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    const payments = await res.json();
+    console.log("Payments fetched for income:", payments);
+
+    const userId = sessionStorage.getItem("userID");
+    const filteredPayments = payments.filter(p => p.landlordId === userId);
+    const incomeSum = filteredPayments.reduce((sum, payment) => sum + (Number(payment.amount) || 0), 0);
+    
+    setTotalIncome(incomeSum);
+  } catch (err) {
+    console.error("Failed to fetch total income:", err);
+    setTotalIncome(0);
+  } finally {
+    setLoadingIncome(false);
+  }
+};
 
 
-
-  
-  
+    fetchRecentPayments();
+    fetchTotalIncome();
+  }, []);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <ToastContainer />
-     <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Landlord Dashboard</h1>
-     <br />
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Landlord Dashboard</h1>
 
       {/* Top Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card title="Total Properties" value="12" />
-        <Card title="Active Tenants" value="38" />
-        <Card title="Pending Maintenance" value="4" />
-        <Card textColor="text-green-600" title="Total Income (This Month)" value="PKR 12,400" />
+        <Card title="Total Properties" value="12" textColor="text-blue-600" />
+        <Card title="Active Tenants" value="38" textColor="text-blue-600" />
+        <Card title="Pending Maintenance" value="4" textColor="text-blue-600" />
+        <Card
+          title="Total Income (This Month)"
+          value={loadingIncome ? "Loading..." : `PKR ${totalIncome.toLocaleString()}`}
+          textColor="text-green-600"
+        />
       </div>
 
       {/* Expense Summary Cards */}
@@ -122,65 +151,34 @@ useEffect(() => {
         ))}
       </div>
 
-    {/* Rental Status Card */}
-    <div className="bg-white p-6 rounded-xl shadow col-span-1 lg:col-span-2">
-    <h3 className="text-lg font-semibold text-gray-700 mb-4">Rental Payment Status</h3>
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-blue-50">
-          <tr>
-            <th className="px-4 py-2 text-left font-semibold text-gray-600">Tenant</th>
-            <th className="px-4 py-2 text-left font-semibold text-gray-600">Property</th>
-            <th className="px-4 py-2 text-left font-semibold text-gray-600">Status</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
-          {rentalStatusData.map((item, idx) => (
-            <tr key={idx}>
-              <td className="px-4 py-2 text-gray-800">{item.tenant}</td>
-              <td className="px-4 py-2 text-gray-600">{item.property}</td>
-              <td className="px-4 py-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    item.status === "Received"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {item.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <br />
+      {/* Rental Status Card */}
+      <RentalStatusCard />
+      <br />
 
       {/* Maintenance Summary */}
       <div className="bg-white p-6 rounded-xl shadow">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">Maintenance Requests</h3>
-                <ul className="space-y-3">
-                  <li className="flex justify-between text-sm">
-                    <span>Plumbing - Apt 12B</span>
-                    <span className="text-red-500">Pending</span>
-                  </li>
-                  <li className="flex justify-between text-sm">
-                    <span>AC - Apt 4A</span>
-                    <span className="text-green-500">Resolved</span>
-                  </li>
-                  <li className="flex justify-between text-sm">
-                    <span>Lighting - Apt 9C</span>
-                    <span className="text-yellow-500">In Progress</span>
-                  </li>
-                </ul>
-              </div>
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">Maintenance Requests</h3>
+        <ul className="space-y-3">
+          <li className="flex justify-between text-sm">
+            <span>Plumbing - Apt 12B</span>
+            <span className="text-red-500">Pending</span>
+          </li>
+          <li className="flex justify-between text-sm">
+            <span>AC - Apt 4A</span>
+            <span className="text-green-500">Resolved</span>
+          </li>
+          <li className="flex justify-between text-sm">
+            <span>Lighting - Apt 9C</span>
+            <span className="text-yellow-500">In Progress</span>
+          </li>
+        </ul>
+      </div>
 
-        <br />
+      <br />
+
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Monthly Expense Bar Chart */}
+        {/* Expense Breakdown Bar Chart */}
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">Expense Breakdown</h3>
           <ResponsiveContainer width="100%" height={250}>
@@ -193,7 +191,7 @@ useEffect(() => {
           </ResponsiveContainer>
         </div>
 
-        {/* Income vs Expense Comparison */}
+        {/* Income vs Expense Comparison Line Chart */}
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">Income vs Expense (Monthly)</h3>
           <ResponsiveContainer width="100%" height={250}>
@@ -239,10 +237,10 @@ useEffect(() => {
   );
 };
 
-const Card = ({ title, value, textColor = "text-blue-700" }) => (
-  <div className="bg-white p-4 rounded-xl shadow hover:shadow-md transition">
-    <p className="text-sm text-gray-500">{title}</p>
-    <h2 className={`text-2xl font-bold mt-2 ${textColor}`}>{value}</h2>
+const Card = ({ title, value, textColor = "text-blue-600" }) => (
+  <div className="bg-white shadow rounded-xl p-6">
+    <h3 className="text-sm text-gray-500">{title}</h3>
+    <p className={`text-2xl font-semibold mt-2 ${textColor}`}>{value}</p>
   </div>
 );
 
