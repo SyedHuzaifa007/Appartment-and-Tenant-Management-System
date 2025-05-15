@@ -1,0 +1,108 @@
+.tenant-home-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.rent-info-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rent-info-card h2 {
+    color: #3498db;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.info-value {
+    color: #2c3e50;
+}
+
+.info-value.warning {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.actions-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.pay-rent-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.pay-rent-btn:hover {
+    background-color: #27ae60;
+}
+
+.contact-landlord-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.contact-landlord-btn:hover {
+    background-color: #2980b9;
+}
+
+.payment-history {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-history h3 {
+    margin-top: 0;
+    color: #3498db;
+}
+
+.loading, .error, .no-data {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+}
+
+.error {
+    color: #e74c3c;
+}
