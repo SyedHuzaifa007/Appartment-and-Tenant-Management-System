@@ -39,21 +39,53 @@ const rentalStatusData = [
 const HomePage = () => {
 
   useEffect(() => {
-    console.log("In UseEffect");
-    const shouldShowToast = sessionStorage.getItem("showLoginToast");
-    console.log(shouldShowToast);
-    if (shouldShowToast === "true") {
-      console.log("Inside condition")
-      console.log(shouldShowToast);
-      toast.success("Login successful!", {
-        position: "top-right",
-        autoClose: 3000,
-        pauseOnHover: true,
-        theme: "colored",
-      });
-      sessionStorage.removeItem("showLoginToast");
+  const userId = sessionStorage.getItem("userId");
+  const showLoginToast = sessionStorage.getItem("showLoginToast");
+  if (showLoginToast === "true") {
+    toast.success("Login successful!", {
+      position: "top-right",
+      autoClose: 3000,
+      pauseOnHover: true,
+      theme: "colored",
+    });
+    sessionStorage.removeItem("showLoginToast");
+  }
+
+  const fetchRecentPayments = async () => {
+    console.log("In fetch payments function")
+    try {
+      const res = await fetch("http://localhost:5000/api/payments/recent?hours=12", {
+      credentials: 'include'
+  });
+
+      const payments = await res.json();
+
+      console.log("Hit /api/payments/recent");
+      res.json({ test: true }); 
+
+      
+
+      for (const payment of payments) {
+        if (payment.landlordId === userId) {
+          const tenantRes = await fetch(`/api/tenants/${payment.tenantId}`);
+          const tenantData = await tenantRes.json();
+
+          toast.info(`Rent received from ${tenantData.name}`, {
+            position: "top-right",
+            autoClose: 4000,
+            pauseOnHover: true,
+            theme: "light",
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch rent payment notifications:", err);
     }
-  }, []);
+  };
+
+  fetchRecentPayments();
+}, []);
+
   
   
 
