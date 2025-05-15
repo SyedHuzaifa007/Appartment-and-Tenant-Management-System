@@ -42,6 +42,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+
 // PUT with file upload (proof + comment)
 router.put("/:id", upload.single("proof"), async (req, res) => {
   try {
@@ -71,5 +72,25 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete request" });
   }
 });
+
+// Example Express PUT route for updating a request
+app.put('/api/requests/:id', async (req, res) => {
+  const { id } = req.params;
+  const { assignedTo, comments } = req.body;
+
+  try {
+    const updatedRequest = await RequestModel.findByIdAndUpdate(
+      id,
+      { assignedTo, comments, status: "Assigned" }, // update status if needed
+      { new: true }
+    );
+    if (!updatedRequest) return res.status(404).json({ message: "Request not found" });
+
+    res.json(updatedRequest);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
 
 module.exports = router;

@@ -18,13 +18,13 @@ const TenantsMaintenancePage = () => {
   const [requests, setRequests] = useState([]);
 
    const userID = sessionStorage.getItem("userID");
-   var id=0;
+  //  var id=0;
   // console.log("userID----"+ userID);
   // const tenantID=sessionStorage.getItem("landlordID");
   // console.log(tenantID);
 
   const [tenantInfo, setTenantInfo] = useState(null);
-  const[landlordID,setLandlordId]=useState(null);
+  // const[landlordID,setLandlordId]=useState(null);
 
 useEffect(() => {
   const fetchTenantInfo = async () => {
